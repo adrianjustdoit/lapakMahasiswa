@@ -10,7 +10,7 @@
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Comic+Neue:wght@400;700&family=Lora:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
     <!-- Material Symbols -->
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
@@ -24,17 +24,9 @@
                 extend: {
                     colors: {
                         primary: '#24aceb',
-                        'text-light': '#0d151c',
-                        'text-dark': '#ffffff',
-                        'surface-light': '#e8eef3',
-                        'surface-dark': '#1a2632',
-                        'border-light': '#d0dfe8',
-                        'border-dark': '#3a4a5a',
                     },
                     fontFamily: {
                         display: ['"Plus Jakarta Sans"', 'sans-serif'],
-                        comic: ['"Comic Neue"', 'cursive'],
-                        serif: ['Lora', 'serif'],
                     }
                 }
             }
@@ -46,7 +38,7 @@
         }
     </style>
 </head>
-<body class="font-display antialiased bg-white dark:bg-gray-900">
+<body class="font-display antialiased bg-[#f6f7f8] dark:bg-[#111c21]">
     @yield('content')
 
     @stack('scripts')

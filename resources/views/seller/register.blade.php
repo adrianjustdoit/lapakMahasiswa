@@ -4,11 +4,11 @@
     <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Seller Registration - LapakMahasiswa</title>
+    <title>Daftar Penjual - LapakMahasiswa</title>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <link href="https://fonts.googleapis.com" rel="preconnect"/>
     <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800&amp;display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
     <script>
         tailwind.config = {
@@ -43,8 +43,8 @@
     <div class="relative flex min-h-screen w-full flex-col bg-background-light dark:bg-background-dark group/design-root overflow-x-hidden">
         <div class="flex flex-1">
             <div class="grid w-full grid-cols-1 md:grid-cols-10">
-                <!-- Left Panel -->
-                <div class="relative hidden md:flex md:col-span-4 flex-col items-start justify-center p-12 bg-gradient-to-br from-blue-500 to-purple-600 text-white">
+                <!-- Left Panel - Selaras dengan primary color (#24aceb) -->
+                <div class="relative hidden md:flex md:col-span-4 flex-col items-start justify-center p-12 bg-primary text-white">
                     <a href="{{ url('/') }}" class="absolute top-12 left-12 flex items-center gap-3 hover:opacity-80 transition-opacity">
                         <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-white/20">
                             <span class="material-symbols-outlined text-white text-2xl">store</span>
@@ -58,6 +58,35 @@
                         </div>
                         <div class="flex flex-col gap-5">
                             <div class="flex items-center gap-4">
+                                <div class="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-white/20">
+                                    <span class="material-symbols-outlined text-white text-2xl">card_giftcard</span>
+                                </div>
+                                <div>
+                                    <h3 class="font-bold text-lg">Gratis Pendaftaran</h3>
+                                    <p class="text-sm text-white/70">Tanpa biaya pendaftaran atau biaya tersembunyi.</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-4">
+                                <div class="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-white/20">
+                                    <span class="material-symbols-outlined text-white text-2xl">groups</span>
+                                </div>
+                                <div>
+                                    <h3 class="font-bold text-lg">Jangkauan Luas</h3>
+                                    <p class="text-sm text-white/70">Jangkau ribuan mahasiswa di seluruh kampus.</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-4">
+                                <div class="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-white/20">
+                                    <span class="material-symbols-outlined text-white text-2xl">dashboard</span>
+                                </div>
+                                <div>
+                                    <h3 class="font-bold text-lg">Mudah Dikelola</h3>
+                                    <p class="text-sm text-white/70">Dashboard penjual yang intuitif dan mudah digunakan.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                                 <div class="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-white/10">
                                     <span class="material-symbols-outlined text-white text-2xl">card_giftcard</span>
                                 </div>
@@ -222,7 +251,7 @@
                                         <label class="text-gray-500 dark:text-gray-300" for="terms">Saya setuju dengan <a class="font-medium text-primary hover:underline" href="#">syarat dan ketentuan</a> yang berlaku</label>
                                     </div>
                                 </div>
-                                <button class="w-full text-white bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-bold rounded-lg text-base px-5 py-3.5 text-center" type="submit">Daftar Sekarang</button>
+                                <button class="w-full text-white bg-primary hover:opacity-90 focus:ring-4 focus:outline-none focus:ring-primary/30 font-bold rounded-lg text-base px-5 py-3.5 text-center transition-opacity" type="submit">Daftar Sekarang</button>
                                 <p class="text-sm font-light text-gray-500 dark:text-gray-400 text-center">
                                     Sudah punya akun? <a class="font-medium text-primary hover:underline" href="{{ route('login') }}">Masuk di sini</a>
                                 </p>

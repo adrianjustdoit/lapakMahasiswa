@@ -18,7 +18,7 @@ class AdminUserSeeder extends Seeder
             ['email' => 'admin@lapak.test'],
             [
                 'name' => 'Admin',
-                'password' => Hash::make('password'), // change after first login
+                'password' => Hash::make('password'),
                 'email_verified_at' => now(),
                 'is_admin' => true,
                 'activation_token' => Str::random(64),

@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SellerRegistrationController;
 use App\Http\Controllers\AdminSellerVerificationController;
 use App\Http\Controllers\SellerActivationController;
+use App\Http\Controllers\ProductController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -42,3 +43,11 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/admin/sellers/{user}/approve', [AdminSellerVerificationController::class, 'approve'])->name('admin.sellers.approve');
     Route::post('/admin/sellers/{user}/reject', [AdminSellerVerificationController::class, 'reject'])->name('admin.sellers.reject');
 });
+
+// Detail produk
+Route::get('/products/{product}', [ProductController::class, 'show'])
+    ->name('products.show');
+
+// Simpan review tamu (tanpa middleware auth)
+Route::post('/products/{product}/reviews', [ProductController::class, 'storeGuestReview'])
+    ->name('products.reviews.store');

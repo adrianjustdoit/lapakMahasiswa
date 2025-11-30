@@ -105,8 +105,8 @@
                     <div class="space-y-2">
                         <p class="text-[#0e171b] dark:text-white">{{ $user->pic_address }}</p>
                         <p class="text-[#4d8199]">RT {{ $user->rt }} / RW {{ $user->rw }}</p>
-                        <p class="text-[#4d8199]">Kel. {{ $user->kelurahan }}, Kota {{ $user->kota }}</p>
-                        <p class="text-[#4d8199]">Provinsi {{ $user->provinsi }}</p>
+                        <p class="text-[#4d8199]">Kel. {{ $user->kelurahan }}, Kec. {{ $user->kecamatan }}</p>
+                        <p class="text-[#4d8199]">{{ $user->kota }}, {{ $user->provinsi }}</p>
                     </div>
                 </section>
             </div>
@@ -123,7 +123,7 @@
                     </div>
                     <div class="space-y-4">
                         <div>
-                            <p class="text-sm text-[#4d8199] mb-2">Foto KTP</p>
+                            <p class="text-sm text-[#4d8199] mb-2">Foto KTP PIC</p>
                             @if($user->pic_id_photo_path)
                                 <a href="{{ asset('storage/'.$user->pic_id_photo_path) }}" target="_blank" class="block">
                                     <div class="relative w-full aspect-[4/3] bg-gray-100 dark:bg-gray-800 rounded-lg border border-[#d0e0e7] dark:border-gray-700 overflow-hidden hover:opacity-90 transition-opacity">

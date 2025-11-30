@@ -6,6 +6,7 @@ use App\Http\Controllers\AdminSellerVerificationController;
 use App\Http\Controllers\SellerActivationController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SellerController;
+use App\Http\Controllers\RegionController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -94,3 +95,11 @@ Route::middleware(['auth'])->group(function () {
 // Halaman publik toko (non-login boleh akses)
 Route::get('/shops/{user}', [SellerController::class, 'show'])
     ->name('shops.show');
+
+// API Region Indonesia (proxy to avoid CORS)
+Route::prefix('api/region')->group(function () {
+    Route::get('/provinces', [RegionController::class, 'provinces']);
+    Route::get('/regencies/{provinceCode}', [RegionController::class, 'regencies']);
+    Route::get('/districts/{regencyCode}', [RegionController::class, 'districts']);
+    Route::get('/villages/{districtCode}', [RegionController::class, 'villages']);
+});

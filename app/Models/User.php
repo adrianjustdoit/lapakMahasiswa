@@ -32,6 +32,7 @@ class User extends Authenticatable
         'rt',
         'rw',
         'kelurahan',
+        'kecamatan',
         'kota',
         'provinsi',
         'pic_id_number',

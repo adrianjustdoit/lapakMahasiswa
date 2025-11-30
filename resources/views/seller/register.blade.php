@@ -37,6 +37,13 @@
         .material-symbols-outlined {
             font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
         }
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        .animate-spin {
+            animation: spin 1s linear infinite;
+        }
     </style>
 </head>
 <body class="font-display">
@@ -170,13 +177,54 @@
                                 <p class="text-[#0e171b] dark:text-gray-300 text-base font-medium leading-normal pb-2">RW</p>
                                 <input name="rw" value="{{ old('rw') }}" class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#0e171b] dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-[#d0e0e7] dark:border-gray-700 bg-background-light dark:bg-background-dark focus:border-primary h-12 placeholder:text-[#4d8199] px-4 text-base font-normal leading-normal" placeholder="001" type="text"/>
                             </label>
+                            <!-- Provinsi Dropdown -->
                             <label class="flex flex-col sm:col-span-2">
                                 <p class="text-[#0e171b] dark:text-gray-300 text-base font-medium leading-normal pb-2">Provinsi<span class="text-red-500">*</span></p>
-                                <input name="provinsi" value="{{ old('provinsi') }}" class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#0e171b] dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-[#d0e0e7] dark:border-gray-700 bg-background-light dark:bg-background-dark focus:border-primary h-12 placeholder:text-[#4d8199] px-4 text-base font-normal leading-normal" placeholder="Pilih provinsi" required="" type="text"/>
+                                <div class="relative">
+                                    <select id="provinsi-select" name="provinsi" required class="form-select flex w-full min-w-0 flex-1 rounded-lg text-[#0e171b] dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-[#d0e0e7] dark:border-gray-700 bg-background-light dark:bg-background-dark focus:border-primary h-12 px-4 text-base font-normal leading-normal appearance-none cursor-pointer">
+                                        <option value="">-- Pilih Provinsi --</option>
+                                    </select>
+                                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-500">
+                                        <span class="material-symbols-outlined text-xl" id="provinsi-icon">expand_more</span>
+                                    </div>
+                                </div>
+                                <input type="hidden" id="provinsi-hidden" name="provinsi_name" value="{{ old('provinsi') }}">
                             </label>
+                            <!-- Kabupaten/Kota Dropdown -->
                             <label class="flex flex-col sm:col-span-2">
                                 <p class="text-[#0e171b] dark:text-gray-300 text-base font-medium leading-normal pb-2">Kabupaten/Kota<span class="text-red-500">*</span></p>
-                                <input name="kota" value="{{ old('kota') }}" class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#0e171b] dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-[#d0e0e7] dark:border-gray-700 bg-background-light dark:bg-background-dark focus:border-primary h-12 placeholder:text-[#4d8199] px-4 text-base font-normal leading-normal" placeholder="Pilih kabupaten/kota" required="" type="text"/>
+                                <div class="relative">
+                                    <select id="kota-select" name="kota" required disabled class="form-select flex w-full min-w-0 flex-1 rounded-lg text-[#0e171b] dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-[#d0e0e7] dark:border-gray-700 bg-background-light dark:bg-background-dark focus:border-primary h-12 px-4 text-base font-normal leading-normal appearance-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
+                                        <option value="">-- Pilih Kabupaten/Kota --</option>
+                                    </select>
+                                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-500">
+                                        <span class="material-symbols-outlined text-xl" id="kota-icon">expand_more</span>
+                                    </div>
+                                </div>
+                            </label>
+                            <!-- Kecamatan Dropdown -->
+                            <label class="flex flex-col sm:col-span-2">
+                                <p class="text-[#0e171b] dark:text-gray-300 text-base font-medium leading-normal pb-2">Kecamatan<span class="text-red-500">*</span></p>
+                                <div class="relative">
+                                    <select id="kecamatan-select" name="kecamatan" required disabled class="form-select flex w-full min-w-0 flex-1 rounded-lg text-[#0e171b] dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-[#d0e0e7] dark:border-gray-700 bg-background-light dark:bg-background-dark focus:border-primary h-12 px-4 text-base font-normal leading-normal appearance-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
+                                        <option value="">-- Pilih Kecamatan --</option>
+                                    </select>
+                                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-500">
+                                        <span class="material-symbols-outlined text-xl" id="kecamatan-icon">expand_more</span>
+                                    </div>
+                                </div>
+                            </label>
+                            <!-- Kelurahan Dropdown -->
+                            <label class="flex flex-col sm:col-span-2">
+                                <p class="text-[#0e171b] dark:text-gray-300 text-base font-medium leading-normal pb-2">Kelurahan</p>
+                                <div class="relative">
+                                    <select id="kelurahan-select" name="kelurahan" disabled class="form-select flex w-full min-w-0 flex-1 rounded-lg text-[#0e171b] dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-[#d0e0e7] dark:border-gray-700 bg-background-light dark:bg-background-dark focus:border-primary h-12 px-4 text-base font-normal leading-normal appearance-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
+                                        <option value="">-- Pilih Kelurahan --</option>
+                                    </select>
+                                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-500">
+                                        <span class="material-symbols-outlined text-xl" id="kelurahan-icon">expand_more</span>
+                                    </div>
+                                </div>
                             </label>
                         </div>
                     </div>
@@ -185,27 +233,33 @@
                         <h3 class="text-[#0e171b] dark:text-white text-lg font-bold leading-tight tracking-[-0.015em] pb-2 pt-4">Upload Dokumen</h3>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div class="flex flex-col">
-                                <p class="text-[#0e171b] dark:text-gray-300 text-base font-medium leading-normal pb-2">Foto KTP<span class="text-red-500">*</span></p>
-                                <div class="flex items-center justify-center w-full">
-                                    <label class="flex flex-col items-center justify-center w-full h-32 border-2 border-[#d0e0e7] dark:border-gray-700 border-dashed rounded-lg cursor-pointer bg-background-light dark:bg-background-dark/50 hover:bg-gray-100 dark:hover:bg-gray-800" for="dropzone-file-ktp">
-                                        <div class="flex flex-col items-center justify-center pt-5 pb-6">
-                                            <span class="material-symbols-outlined text-gray-500 dark:text-gray-400 mb-2">cloud_upload</span>
+                                <p class="text-[#0e171b] dark:text-gray-300 text-base font-medium leading-normal pb-2">Foto KTP PIC<span class="text-red-500">*</span></p>
+                                <div class="w-full">
+                                    <label id="ktp-label" class="flex flex-col items-center justify-center w-full h-40 border-2 border-[#d0e0e7] dark:border-gray-700 border-dashed rounded-lg cursor-pointer bg-background-light dark:bg-background-dark/50 hover:bg-gray-100 dark:hover:bg-gray-800 overflow-hidden relative" for="dropzone-file-ktp">
+                                        <div id="ktp-placeholder" class="flex flex-col items-center justify-center py-5">
+                                            <span class="material-symbols-outlined text-gray-500 dark:text-gray-400 mb-2 text-4xl">cloud_upload</span>
                                             <p class="text-sm text-gray-500 dark:text-gray-400"><span class="font-semibold">Klik untuk upload</span></p>
+                                            <p class="text-xs text-gray-400 mt-1">JPG, PNG max 2MB</p>
                                         </div>
-                                        <input class="hidden" id="dropzone-file-ktp" name="pic_id_photo" required="" type="file" accept="image/*"/>
+                                        <img id="ktp-preview" class="hidden w-full h-full object-cover absolute inset-0" alt="Preview KTP"/>
+                                        <input class="hidden" id="dropzone-file-ktp" name="pic_id_photo" required="" type="file" accept="image/*" onchange="previewImage(this, 'ktp-preview', 'ktp-placeholder')"/>
                                     </label>
+                                    <p id="ktp-filename" class="text-xs text-gray-500 mt-1 truncate"></p>
                                 </div>
                             </div>
                             <div class="flex flex-col">
-                                <p class="text-[#0e171b] dark:text-gray-300 text-base font-medium leading-normal pb-2">Foto Diri<span class="text-red-500">*</span></p>
-                                <div class="flex items-center justify-center w-full">
-                                    <label class="flex flex-col items-center justify-center w-full h-32 border-2 border-[#d0e0e7] dark:border-gray-700 border-dashed rounded-lg cursor-pointer bg-background-light dark:bg-background-dark/50 hover:bg-gray-100 dark:hover:bg-gray-800" for="dropzone-file-pic">
-                                        <div class="flex flex-col items-center justify-center pt-5 pb-6">
-                                            <span class="material-symbols-outlined text-gray-500 dark:text-gray-400 mb-2">cloud_upload</span>
+                                <p class="text-[#0e171b] dark:text-gray-300 text-base font-medium leading-normal pb-2">Foto Diri PIC<span class="text-red-500">*</span></p>
+                                <div class="w-full">
+                                    <label id="pic-label" class="flex flex-col items-center justify-center w-full h-40 border-2 border-[#d0e0e7] dark:border-gray-700 border-dashed rounded-lg cursor-pointer bg-background-light dark:bg-background-dark/50 hover:bg-gray-100 dark:hover:bg-gray-800 overflow-hidden relative" for="dropzone-file-pic">
+                                        <div id="pic-placeholder" class="flex flex-col items-center justify-center py-5">
+                                            <span class="material-symbols-outlined text-gray-500 dark:text-gray-400 mb-2 text-4xl">cloud_upload</span>
                                             <p class="text-sm text-gray-500 dark:text-gray-400"><span class="font-semibold">Klik untuk upload</span></p>
+                                            <p class="text-xs text-gray-400 mt-1">JPG, PNG max 2MB</p>
                                         </div>
-                                        <input class="hidden" id="dropzone-file-pic" name="pic_photo" required="" type="file" accept="image/*"/>
+                                        <img id="pic-preview" class="hidden w-full h-full object-cover absolute inset-0" alt="Preview Foto Diri"/>
+                                        <input class="hidden" id="dropzone-file-pic" name="pic_photo" required="" type="file" accept="image/*" onchange="previewImage(this, 'pic-preview', 'pic-placeholder')"/>
                                     </label>
+                                    <p id="pic-filename" class="text-xs text-gray-500 mt-1 truncate"></p>
                                 </div>
                             </div>
                         </div>
@@ -229,5 +283,230 @@
             </div>
         </div>
     </div>
+    <script>
+        function previewImage(input, previewId, placeholderId) {
+            const preview = document.getElementById(previewId);
+            const placeholder = document.getElementById(placeholderId);
+            const filenameEl = document.getElementById(previewId.replace('-preview', '-filename'));
+            
+            if (input.files && input.files[0]) {
+                const file = input.files[0];
+                
+                // Check file size (max 2MB)
+                if (file.size > 2 * 1024 * 1024) {
+                    alert('Ukuran file maksimal 2MB');
+                    input.value = '';
+                    return;
+                }
+                
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                    preview.classList.remove('hidden');
+                    placeholder.classList.add('hidden');
+                    if (filenameEl) {
+                        filenameEl.textContent = file.name;
+                    }
+                }
+                reader.readAsDataURL(file);
+            } else {
+                preview.classList.add('hidden');
+                placeholder.classList.remove('hidden');
+                if (filenameEl) {
+                    filenameEl.textContent = '';
+                }
+            }
+        }
+
+        // API Wilayah Indonesia - Local Proxy (avoid CORS)
+        const API_BASE = '/api/region';
+        
+        const provinsiSelect = document.getElementById('provinsi-select');
+        const kotaSelect = document.getElementById('kota-select');
+        const kecamatanSelect = document.getElementById('kecamatan-select');
+        const kelurahanSelect = document.getElementById('kelurahan-select');
+        
+        // Loading indicator functions
+        function setLoading(selectEl, iconId, isLoading) {
+            const icon = document.getElementById(iconId);
+            if (isLoading) {
+                selectEl.disabled = true;
+                icon.textContent = 'progress_activity';
+                icon.classList.add('animate-spin');
+            } else {
+                selectEl.disabled = false;
+                icon.textContent = 'expand_more';
+                icon.classList.remove('animate-spin');
+            }
+        }
+        
+        // Format name untuk kapitalisasi yang lebih baik
+        function formatName(name) {
+            // Handle special cases like "DKI", "DIY", etc.
+            const specialCases = ['DKI', 'DIY', 'DI'];
+            return name.split(' ').map(word => {
+                if (specialCases.includes(word.toUpperCase())) {
+                    return word.toUpperCase();
+                }
+                return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+            }).join(' ');
+        }
+
+        // Load Provinsi on page load
+        async function loadProvinsi() {
+            setLoading(provinsiSelect, 'provinsi-icon', true);
+            try {
+                const response = await fetch(`${API_BASE}/provinces`);
+                if (!response.ok) throw new Error('Network response was not ok');
+                const result = await response.json();
+                
+                provinsiSelect.innerHTML = '<option value="">-- Pilih Provinsi --</option>';
+                if (result.data && result.data.length > 0) {
+                    result.data.forEach(prov => {
+                        const option = document.createElement('option');
+                        option.value = prov.name;
+                        option.dataset.code = prov.code;
+                        option.textContent = formatName(prov.name);
+                        provinsiSelect.appendChild(option);
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading provinsi:', error);
+                provinsiSelect.innerHTML = '<option value="">Gagal memuat data</option>';
+            }
+            setLoading(provinsiSelect, 'provinsi-icon', false);
+        }
+
+        // Load Kabupaten/Kota based on selected Provinsi
+        async function loadKota(provinsiCode) {
+            // Reset downstream dropdowns
+            kotaSelect.innerHTML = '<option value="">-- Pilih Kabupaten/Kota --</option>';
+            kecamatanSelect.innerHTML = '<option value="">-- Pilih Kecamatan --</option>';
+            kelurahanSelect.innerHTML = '<option value="">-- Pilih Kelurahan --</option>';
+            kecamatanSelect.disabled = true;
+            kelurahanSelect.disabled = true;
+            
+            if (!provinsiCode) {
+                kotaSelect.disabled = true;
+                return;
+            }
+            
+            setLoading(kotaSelect, 'kota-icon', true);
+            try {
+                const response = await fetch(`${API_BASE}/regencies/${provinsiCode}`);
+                if (!response.ok) throw new Error('Network response was not ok');
+                const result = await response.json();
+                
+                kotaSelect.innerHTML = '<option value="">-- Pilih Kabupaten/Kota --</option>';
+                if (result.data && result.data.length > 0) {
+                    result.data.forEach(kota => {
+                        const option = document.createElement('option');
+                        option.value = kota.name;
+                        option.dataset.code = kota.code;
+                        option.textContent = formatName(kota.name);
+                        kotaSelect.appendChild(option);
+                    });
+                }
+                kotaSelect.disabled = false;
+            } catch (error) {
+                console.error('Error loading kota:', error);
+                kotaSelect.innerHTML = '<option value="">Gagal memuat data</option>';
+            }
+            setLoading(kotaSelect, 'kota-icon', false);
+        }
+
+        // Load Kecamatan based on selected Kabupaten/Kota
+        async function loadKecamatan(kotaCode) {
+            // Reset downstream dropdowns
+            kecamatanSelect.innerHTML = '<option value="">-- Pilih Kecamatan --</option>';
+            kelurahanSelect.innerHTML = '<option value="">-- Pilih Kelurahan --</option>';
+            kelurahanSelect.disabled = true;
+            
+            if (!kotaCode) {
+                kecamatanSelect.disabled = true;
+                return;
+            }
+            
+            setLoading(kecamatanSelect, 'kecamatan-icon', true);
+            try {
+                const response = await fetch(`${API_BASE}/districts/${kotaCode}`);
+                if (!response.ok) throw new Error('Network response was not ok');
+                const result = await response.json();
+                
+                kecamatanSelect.innerHTML = '<option value="">-- Pilih Kecamatan --</option>';
+                if (result.data && result.data.length > 0) {
+                    result.data.forEach(kec => {
+                        const option = document.createElement('option');
+                        option.value = kec.name;
+                        option.dataset.code = kec.code;
+                        option.textContent = formatName(kec.name);
+                        kecamatanSelect.appendChild(option);
+                    });
+                }
+                kecamatanSelect.disabled = false;
+            } catch (error) {
+                console.error('Error loading kecamatan:', error);
+                kecamatanSelect.innerHTML = '<option value="">Gagal memuat data</option>';
+            }
+            setLoading(kecamatanSelect, 'kecamatan-icon', false);
+        }
+
+        // Load Kelurahan based on selected Kecamatan
+        async function loadKelurahan(kecamatanCode) {
+            kelurahanSelect.innerHTML = '<option value="">-- Pilih Kelurahan --</option>';
+            
+            if (!kecamatanCode) {
+                kelurahanSelect.disabled = true;
+                return;
+            }
+            
+            setLoading(kelurahanSelect, 'kelurahan-icon', true);
+            try {
+                const response = await fetch(`${API_BASE}/villages/${kecamatanCode}`);
+                if (!response.ok) throw new Error('Network response was not ok');
+                const result = await response.json();
+                
+                kelurahanSelect.innerHTML = '<option value="">-- Pilih Kelurahan --</option>';
+                if (result.data && result.data.length > 0) {
+                    result.data.forEach(kel => {
+                        const option = document.createElement('option');
+                        option.value = kel.name;
+                        option.dataset.code = kel.code;
+                        option.textContent = formatName(kel.name);
+                        kelurahanSelect.appendChild(option);
+                    });
+                }
+                kelurahanSelect.disabled = false;
+            } catch (error) {
+                console.error('Error loading kelurahan:', error);
+                kelurahanSelect.innerHTML = '<option value="">Gagal memuat data</option>';
+            }
+            setLoading(kelurahanSelect, 'kelurahan-icon', false);
+        }
+
+        // Event listeners
+        provinsiSelect.addEventListener('change', function() {
+            const selectedOption = this.options[this.selectedIndex];
+            const provinsiCode = selectedOption.dataset.code;
+            loadKota(provinsiCode);
+        });
+
+        kotaSelect.addEventListener('change', function() {
+            const selectedOption = this.options[this.selectedIndex];
+            const kotaCode = selectedOption.dataset.code;
+            loadKecamatan(kotaCode);
+        });
+
+        kecamatanSelect.addEventListener('change', function() {
+            const selectedOption = this.options[this.selectedIndex];
+            const kecamatanCode = selectedOption.dataset.code;
+            loadKelurahan(kecamatanCode);
+        });
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            loadProvinsi();
+        });
+    </script>
 </body>
 </html>

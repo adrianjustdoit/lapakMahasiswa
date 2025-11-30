@@ -18,6 +18,7 @@ return new class extends Migration {
             $table->string('rt', 10)->nullable();
             $table->string('rw', 10)->nullable();
             $table->string('kelurahan')->nullable();
+            $table->string('kecamatan')->nullable();
             $table->string('kota')->nullable();
             $table->string('provinsi')->nullable();
             $table->string('pic_id_number', 50)->nullable();
@@ -45,6 +46,7 @@ return new class extends Migration {
                 'rt',
                 'rw',
                 'kelurahan',
+                'kecamatan',
                 'kota',
                 'provinsi',
                 'pic_id_number',

@@ -43,10 +43,6 @@
                             <span class="material-symbols-outlined mr-2 text-lg">dashboard</span>
                             Dashboard
                         </a>
-                        <a href="{{ route('profile.edit') }}" class="flex items-center px-4 py-2 text-sm text-[#0e171b] dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
-                            <span class="material-symbols-outlined mr-2 text-lg">settings</span>
-                            Pengaturan
-                        </a>
                         <hr class="my-2 border-gray-200 dark:border-gray-700">
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf

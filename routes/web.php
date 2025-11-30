@@ -7,6 +7,7 @@ use App\Http\Controllers\SellerActivationController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SellerController;
 use App\Http\Controllers\RegionController;
+use App\Http\Controllers\SellerSettingsController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -74,6 +75,10 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/admin/sellers/{user}', [AdminSellerVerificationController::class, 'show'])->name('admin.sellers.show');
     Route::post('/admin/sellers/{user}/approve', [AdminSellerVerificationController::class, 'approve'])->name('admin.sellers.approve');
     Route::post('/admin/sellers/{user}/reject', [AdminSellerVerificationController::class, 'reject'])->name('admin.sellers.reject');
+    
+    // Profile update approval
+    Route::post('/admin/profile-updates/{update}/approve', [AdminSellerVerificationController::class, 'approveProfileUpdate'])->name('admin.profile-updates.approve');
+    Route::post('/admin/profile-updates/{update}/reject', [AdminSellerVerificationController::class, 'rejectProfileUpdate'])->name('admin.profile-updates.reject');
 });
 
 // Detail produk
@@ -90,6 +95,18 @@ Route::middleware(['auth'])->group(function () {
         ->name('seller.products.create');
     Route::post('/seller/products', [ProductController::class, 'store'])
         ->name('seller.products.store');
+    
+    // Seller settings
+    Route::get('/seller/settings', [SellerSettingsController::class, 'index'])
+        ->name('seller.settings');
+    Route::put('/seller/settings/shop', [SellerSettingsController::class, 'updateShop'])
+        ->name('seller.settings.update-shop');
+    Route::put('/seller/settings/contact', [SellerSettingsController::class, 'updateContact'])
+        ->name('seller.settings.update-contact');
+    Route::put('/seller/settings/password', [SellerSettingsController::class, 'updatePassword'])
+        ->name('seller.settings.update-password');
+    Route::delete('/seller/settings/cancel-update', [SellerSettingsController::class, 'cancelUpdate'])
+        ->name('seller.settings.cancel-update');
 });
 
 // Halaman publik toko (non-login boleh akses)

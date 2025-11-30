@@ -39,9 +39,9 @@
                     <span>Dashboard</span>
                 </a>
                 @if(Auth::user()->seller_status === 'approved')
-                <a href="{{ route('seller.products.create') }}" class="flex items-center space-x-3 px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
-                    <span class="material-symbols-outlined">add_box</span>
-                    <span>Tambah Produk</span>
+                <a href="{{ route('seller.settings') }}" class="flex items-center space-x-3 px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
+                    <span class="material-symbols-outlined">settings</span>
+                    <span>Pengaturan</span>
                 </a>
                 @endif
                 

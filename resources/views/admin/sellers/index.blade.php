@@ -174,7 +174,7 @@
         </section>
 
         <!-- Rejected Section -->
-        <section class="border border-[#d0e0e7] dark:border-gray-700 rounded-2xl p-6">
+        <section class="border border-[#d0e0e7] dark:border-gray-700 rounded-2xl p-6 mb-8">
             <div class="flex items-center gap-3 mb-6">
                 <div class="w-10 h-10 bg-red-500 rounded-full flex items-center justify-center">
                     <span class="material-symbols-outlined text-white">cancel</span>
@@ -217,6 +217,114 @@
                 </div>
             @endif
         </section>
+
+        <!-- Pending Profile Updates Section -->
+        @if(isset($pendingProfileUpdates) && $pendingProfileUpdates->count() > 0)
+        <section class="border border-[#d0e0e7] dark:border-gray-700 rounded-2xl p-6 mb-8">
+            <div class="flex items-center gap-3 mb-6">
+                <div class="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center">
+                    <span class="material-symbols-outlined text-white">edit_note</span>
+                </div>
+                <h2 class="text-xl font-bold font-display text-[#0e171b] dark:text-white">Permintaan Perubahan Profil Toko</h2>
+                <span class="bg-blue-500 text-white text-xs font-bold px-2 py-1 rounded-full">{{ $pendingProfileUpdates->count() }}</span>
+            </div>
+            
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead>
+                        <tr class="border-b border-[#d0e0e7] dark:border-gray-700">
+                            <th class="text-left py-3 px-4 font-semibold text-[#0e171b] dark:text-white">Penjual</th>
+                            <th class="text-left py-3 px-4 font-semibold text-[#0e171b] dark:text-white">Nama Toko Lama</th>
+                            <th class="text-left py-3 px-4 font-semibold text-[#0e171b] dark:text-white">Nama Toko Baru</th>
+                            <th class="text-left py-3 px-4 font-semibold text-[#0e171b] dark:text-white">Deskripsi Baru</th>
+                            <th class="text-center py-3 px-4 font-semibold text-[#0e171b] dark:text-white">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($pendingProfileUpdates as $update)
+                        <tr class="border-b border-[#d0e0e7] dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800/50">
+                            <td class="py-4 px-4">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center">
+                                        <span class="material-symbols-outlined text-blue-600">person</span>
+                                    </div>
+                                    <div>
+                                        <span class="font-medium text-[#0e171b] dark:text-white">{{ $update->user->pic_name }}</span>
+                                        <p class="text-xs text-[#4d8199]">{{ $update->user->pic_email }}</p>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="py-4 px-4 text-[#4d8199]">{{ $update->user->shop_name }}</td>
+                            <td class="py-4 px-4">
+                                @if($update->shop_name !== $update->user->shop_name)
+                                    <span class="font-medium text-blue-600 dark:text-blue-400">{{ $update->shop_name }}</span>
+                                @else
+                                    <span class="text-[#4d8199]">{{ $update->shop_name }}</span>
+                                @endif
+                            </td>
+                            <td class="py-4 px-4 text-[#4d8199] max-w-xs truncate" title="{{ $update->shop_description }}">
+                                {{ Str::limit($update->shop_description, 50) ?: '-' }}
+                            </td>
+                            <td class="py-4 px-4">
+                                <div class="flex items-center justify-center gap-2">
+                                    <form method="POST" action="{{ route('admin.profile-updates.approve', $update) }}" class="inline">
+                                        @csrf
+                                        <button type="submit" class="inline-flex items-center gap-1 px-3 py-1.5 bg-green-500 text-white rounded-full font-semibold text-sm hover:bg-green-600 transition-colors">
+                                            <span class="material-symbols-outlined text-lg">check</span>
+                                            Setuju
+                                        </button>
+                                    </form>
+                                    <button type="button" onclick="showRejectModal({{ $update->id }})" class="inline-flex items-center gap-1 px-3 py-1.5 bg-red-500 text-white rounded-full font-semibold text-sm hover:bg-red-600 transition-colors">
+                                        <span class="material-symbols-outlined text-lg">close</span>
+                                        Tolak
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Reject Profile Update Modal -->
+        <div id="rejectProfileModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50">
+            <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 max-w-md w-full mx-4">
+                <h3 class="text-lg font-bold text-[#0e171b] dark:text-white mb-4">Tolak Perubahan Profil</h3>
+                <form id="rejectProfileForm" method="POST">
+                    @csrf
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Catatan (Opsional)</label>
+                        <textarea name="admin_notes" rows="3" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary dark:bg-gray-700 dark:text-white resize-none" placeholder="Alasan penolakan..."></textarea>
+                    </div>
+                    <div class="flex gap-2 justify-end">
+                        <button type="button" onclick="hideRejectModal()" class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                            Batal
+                        </button>
+                        <button type="submit" class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors">
+                            Tolak Perubahan
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <script>
+            function showRejectModal(updateId) {
+                const modal = document.getElementById('rejectProfileModal');
+                const form = document.getElementById('rejectProfileForm');
+                form.action = `/admin/profile-updates/${updateId}/reject`;
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+            }
+
+            function hideRejectModal() {
+                const modal = document.getElementById('rejectProfileModal');
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }
+        </script>
+        @endif
     </main>
 
     <!-- Footer -->

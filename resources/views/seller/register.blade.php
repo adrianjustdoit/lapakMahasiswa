@@ -149,15 +149,18 @@
                             </label>
                             <label class="flex flex-col">
                                 <p class="text-[#0e171b] dark:text-gray-300 text-base font-medium leading-normal pb-2">No. Telepon<span class="text-red-500">*</span></p>
-                                <input name="pic_phone" value="{{ old('pic_phone') }}" class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#0e171b] dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-[#d0e0e7] dark:border-gray-700 bg-background-light dark:bg-background-dark focus:border-primary h-12 placeholder:text-[#4d8199] px-4 text-base font-normal leading-normal" placeholder="08123456789" required="" type="tel"/>
+                                <input id="phone-input" name="pic_phone" value="{{ old('pic_phone') }}" class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#0e171b] dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-[#d0e0e7] dark:border-gray-700 bg-background-light dark:bg-background-dark focus:border-primary h-12 placeholder:text-[#4d8199] px-4 text-base font-normal leading-normal" placeholder="08123456789" required="" type="tel" pattern="^08[0-9]{8,11}$" minlength="10" maxlength="13" oninput="validatePhone(this)"/>
+                                <p id="phone-error" class="hidden text-xs text-red-500 mt-1">Nomor telepon harus diawali 08 dan terdiri dari 10-13 digit</p>
                             </label>
                             <label class="flex flex-col sm:col-span-2">
                                 <p class="text-[#0e171b] dark:text-gray-300 text-base font-medium leading-normal pb-2">Email<span class="text-red-500">*</span></p>
-                                <input name="pic_email" value="{{ old('pic_email') }}" class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#0e171b] dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-[#d0e0e7] dark:border-gray-700 bg-background-light dark:bg-background-dark focus:border-primary h-12 placeholder:text-[#4d8199] px-4 text-base font-normal leading-normal" placeholder="email@contoh.com" required="" type="email"/>
+                                <input id="email-input" name="pic_email" value="{{ old('pic_email') }}" autocomplete="off" class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#0e171b] dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-[#d0e0e7] dark:border-gray-700 bg-background-light dark:bg-background-dark focus:border-primary h-12 placeholder:text-[#4d8199] px-4 text-base font-normal leading-normal" placeholder="email@contoh.com" required="" type="email" oninput="validateEmail(this)"/>
+                                <p id="email-error" class="hidden text-xs text-red-500 mt-1">Format email tidak valid</p>
                             </label>
                             <label class="flex flex-col sm:col-span-2">
                                 <p class="text-[#0e171b] dark:text-gray-300 text-base font-medium leading-normal pb-2">No. KTP<span class="text-red-500">*</span></p>
-                                <input name="pic_id_number" value="{{ old('pic_id_number') }}" class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#0e171b] dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-[#d0e0e7] dark:border-gray-700 bg-background-light dark:bg-background-dark focus:border-primary h-12 placeholder:text-[#4d8199] px-4 text-base font-normal leading-normal" placeholder="3171234567890001" required="" type="text"/>
+                                <input id="ktp-number-input" name="pic_id_number" value="{{ old('pic_id_number') }}" class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#0e171b] dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-[#d0e0e7] dark:border-gray-700 bg-background-light dark:bg-background-dark focus:border-primary h-12 placeholder:text-[#4d8199] px-4 text-base font-normal leading-normal" placeholder="3171234567890001" required="" type="text" pattern="^[0-9]{16}$" minlength="16" maxlength="16" oninput="validateKTP(this)"/>
+                                <p id="ktp-error" class="hidden text-xs text-red-500 mt-1">Nomor KTP harus 16 digit angka</p>
                             </label>
                         </div>
                     </div>
@@ -235,31 +238,105 @@
                             <div class="flex flex-col">
                                 <p class="text-[#0e171b] dark:text-gray-300 text-base font-medium leading-normal pb-2">Foto KTP PIC<span class="text-red-500">*</span></p>
                                 <div class="w-full">
-                                    <label id="ktp-label" class="flex flex-col items-center justify-center w-full h-40 border-2 border-[#d0e0e7] dark:border-gray-700 border-dashed rounded-lg cursor-pointer bg-background-light dark:bg-background-dark/50 hover:bg-gray-100 dark:hover:bg-gray-800 overflow-hidden relative" for="dropzone-file-ktp">
+                                    <label id="ktp-label" class="flex flex-col items-center justify-center w-full h-40 border-2 border-[#d0e0e7] dark:border-gray-700 border-dashed rounded-lg cursor-pointer bg-background-light dark:bg-background-dark/50 hover:bg-gray-100 dark:hover:bg-gray-800 overflow-hidden relative transition-all" for="dropzone-file-ktp">
+                                        <!-- Default State -->
                                         <div id="ktp-placeholder" class="flex flex-col items-center justify-center py-5">
                                             <span class="material-symbols-outlined text-gray-500 dark:text-gray-400 mb-2 text-4xl">cloud_upload</span>
                                             <p class="text-sm text-gray-500 dark:text-gray-400"><span class="font-semibold">Klik untuk upload</span></p>
                                             <p class="text-xs text-gray-400 mt-1">JPG, PNG max 2MB</p>
                                         </div>
-                                        <img id="ktp-preview" class="hidden w-full h-full object-cover absolute inset-0" alt="Preview KTP"/>
-                                        <input class="hidden" id="dropzone-file-ktp" name="pic_id_photo" required="" type="file" accept="image/*" onchange="previewImage(this, 'ktp-preview', 'ktp-placeholder')"/>
+                                        <!-- Loading State -->
+                                        <div id="ktp-loading" class="hidden flex-col items-center justify-center py-5">
+                                            <span class="material-symbols-outlined text-primary mb-2 text-4xl animate-spin">progress_activity</span>
+                                            <p class="text-sm text-primary font-semibold">Mengupload...</p>
+                                        </div>
+                                        <!-- Success State -->
+                                        <div id="ktp-success" class="hidden flex-col items-center justify-center py-5">
+                                            <span class="material-symbols-outlined text-green-500 mb-2 text-4xl">check_circle</span>
+                                            <p class="text-sm text-green-600 dark:text-green-400 font-semibold">Foto berhasil diupload</p>
+                                            <p id="ktp-filename" class="text-xs text-gray-500 mt-1 truncate max-w-[200px]"></p>
+                                        </div>
+                                        <input class="hidden" id="dropzone-file-ktp" name="pic_id_photo" required="" type="file" accept="image/*" onchange="handleFileUpload(this, 'ktp')"/>
                                     </label>
-                                    <p id="ktp-filename" class="text-xs text-gray-500 mt-1 truncate"></p>
                                 </div>
                             </div>
                             <div class="flex flex-col">
                                 <p class="text-[#0e171b] dark:text-gray-300 text-base font-medium leading-normal pb-2">Foto Diri PIC<span class="text-red-500">*</span></p>
                                 <div class="w-full">
-                                    <label id="pic-label" class="flex flex-col items-center justify-center w-full h-40 border-2 border-[#d0e0e7] dark:border-gray-700 border-dashed rounded-lg cursor-pointer bg-background-light dark:bg-background-dark/50 hover:bg-gray-100 dark:hover:bg-gray-800 overflow-hidden relative" for="dropzone-file-pic">
+                                    <label id="pic-label" class="flex flex-col items-center justify-center w-full h-40 border-2 border-[#d0e0e7] dark:border-gray-700 border-dashed rounded-lg cursor-pointer bg-background-light dark:bg-background-dark/50 hover:bg-gray-100 dark:hover:bg-gray-800 overflow-hidden relative transition-all" for="dropzone-file-pic">
+                                        <!-- Default State -->
                                         <div id="pic-placeholder" class="flex flex-col items-center justify-center py-5">
                                             <span class="material-symbols-outlined text-gray-500 dark:text-gray-400 mb-2 text-4xl">cloud_upload</span>
                                             <p class="text-sm text-gray-500 dark:text-gray-400"><span class="font-semibold">Klik untuk upload</span></p>
                                             <p class="text-xs text-gray-400 mt-1">JPG, PNG max 2MB</p>
                                         </div>
-                                        <img id="pic-preview" class="hidden w-full h-full object-cover absolute inset-0" alt="Preview Foto Diri"/>
-                                        <input class="hidden" id="dropzone-file-pic" name="pic_photo" required="" type="file" accept="image/*" onchange="previewImage(this, 'pic-preview', 'pic-placeholder')"/>
+                                        <!-- Loading State -->
+                                        <div id="pic-loading" class="hidden flex-col items-center justify-center py-5">
+                                            <span class="material-symbols-outlined text-primary mb-2 text-4xl animate-spin">progress_activity</span>
+                                            <p class="text-sm text-primary font-semibold">Mengupload...</p>
+                                        </div>
+                                        <!-- Success State -->
+                                        <div id="pic-success" class="hidden flex-col items-center justify-center py-5">
+                                            <span class="material-symbols-outlined text-green-500 mb-2 text-4xl">check_circle</span>
+                                            <p class="text-sm text-green-600 dark:text-green-400 font-semibold">Foto berhasil diupload</p>
+                                            <p id="pic-filename" class="text-xs text-gray-500 mt-1 truncate max-w-[200px]"></p>
+                                        </div>
+                                        <input class="hidden" id="dropzone-file-pic" name="pic_photo" required="" type="file" accept="image/*" onchange="handleFileUpload(this, 'pic')"/>
                                     </label>
-                                    <p id="pic-filename" class="text-xs text-gray-500 mt-1 truncate"></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                                        <!-- Password -->
+                    <div>
+                        <h3 class="text-[#0e171b] dark:text-white text-lg font-bold leading-tight tracking-[-0.015em] pb-2 pt-4">Keamanan Akun</h3>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <label class="flex flex-col">
+                                <p class="text-[#0e171b] dark:text-gray-300 text-base font-medium leading-normal pb-2">Password<span class="text-red-500">*</span></p>
+                                <div class="relative">
+                                    <input id="password-input" name="password" autocomplete="new-password" class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#0e171b] dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-[#d0e0e7] dark:border-gray-700 bg-background-light dark:bg-background-dark focus:border-primary h-12 placeholder:text-[#4d8199] px-4 pr-12 text-base font-normal leading-normal" placeholder="Masukkan password" required="" type="password"/>
+                                    <button type="button" onclick="togglePassword('password-input', 'password-toggle-icon')" class="absolute inset-y-0 right-0 flex items-center px-3 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">
+                                        <span class="material-symbols-outlined text-xl" id="password-toggle-icon">visibility_off</span>
+                                    </button>
+                                </div>
+                            </label>
+                            <label class="flex flex-col">
+                                <p class="text-[#0e171b] dark:text-gray-300 text-base font-medium leading-normal pb-2">Konfirmasi Password<span class="text-red-500">*</span></p>
+                                <div class="relative">
+                                    <input id="password-confirm-input" name="password_confirmation" autocomplete="new-password" class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#0e171b] dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-[#d0e0e7] dark:border-gray-700 bg-background-light dark:bg-background-dark focus:border-primary h-12 placeholder:text-[#4d8199] px-4 pr-12 text-base font-normal leading-normal" placeholder="Konfirmasi password" required="" type="password"/>
+                                    <button type="button" onclick="togglePassword('password-confirm-input', 'password-confirm-toggle-icon')" class="absolute inset-y-0 right-0 flex items-center px-3 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">
+                                        <span class="material-symbols-outlined text-xl" id="password-confirm-toggle-icon">visibility_off</span>
+                                    </button>
+                                </div>
+                            </label>
+                            <!-- Password Requirements -->
+                            <div class="sm:col-span-2 mt-2">
+                                <p class="text-[#0e171b] dark:text-gray-300 text-sm font-medium mb-2">Persyaratan Password:</p>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                    <div class="flex items-center gap-2" id="req-lowercase">
+                                        <span class="material-symbols-outlined text-lg text-red-500" id="icon-lowercase">close</span>
+                                        <span class="text-sm text-gray-600 dark:text-gray-400">Minimal 1 huruf kecil (a-z)</span>
+                                    </div>
+                                    <div class="flex items-center gap-2" id="req-uppercase">
+                                        <span class="material-symbols-outlined text-lg text-red-500" id="icon-uppercase">close</span>
+                                        <span class="text-sm text-gray-600 dark:text-gray-400">Minimal 1 huruf besar (A-Z)</span>
+                                    </div>
+                                    <div class="flex items-center gap-2" id="req-number">
+                                        <span class="material-symbols-outlined text-lg text-red-500" id="icon-number">close</span>
+                                        <span class="text-sm text-gray-600 dark:text-gray-400">Minimal 1 angka (0-9)</span>
+                                    </div>
+                                    <div class="flex items-center gap-2" id="req-symbol">
+                                        <span class="material-symbols-outlined text-lg text-red-500" id="icon-symbol">close</span>
+                                        <span class="text-sm text-gray-600 dark:text-gray-400">Minimal 1 simbol (!@#$%^&*)</span>
+                                    </div>
+                                    <div class="flex items-center gap-2" id="req-length">
+                                        <span class="material-symbols-outlined text-lg text-red-500" id="icon-length">close</span>
+                                        <span class="text-sm text-gray-600 dark:text-gray-400">Minimal 8 karakter</span>
+                                    </div>
+                                    <div class="flex items-center gap-2" id="req-match">
+                                        <span class="material-symbols-outlined text-lg text-red-500" id="icon-match">close</span>
+                                        <span class="text-sm text-gray-600 dark:text-gray-400">Password cocok</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -284,10 +361,12 @@
         </div>
     </div>
     <script>
-        function previewImage(input, previewId, placeholderId) {
-            const preview = document.getElementById(previewId);
-            const placeholder = document.getElementById(placeholderId);
-            const filenameEl = document.getElementById(previewId.replace('-preview', '-filename'));
+        function handleFileUpload(input, prefix) {
+            const placeholder = document.getElementById(`${prefix}-placeholder`);
+            const loading = document.getElementById(`${prefix}-loading`);
+            const success = document.getElementById(`${prefix}-success`);
+            const filenameEl = document.getElementById(`${prefix}-filename`);
+            const label = document.getElementById(`${prefix}-label`);
             
             if (input.files && input.files[0]) {
                 const file = input.files[0];
@@ -299,22 +378,69 @@
                     return;
                 }
                 
+                // Check file type
+                if (!file.type.startsWith('image/')) {
+                    alert('File harus berupa gambar (JPG, PNG)');
+                    input.value = '';
+                    return;
+                }
+                
+                // Show loading state
+                placeholder.classList.add('hidden');
+                placeholder.classList.remove('flex');
+                success.classList.add('hidden');
+                success.classList.remove('flex');
+                loading.classList.remove('hidden');
+                loading.classList.add('flex');
+                label.classList.remove('border-[#d0e0e7]', 'dark:border-gray-700', 'border-green-500');
+                label.classList.add('border-primary');
+                
+                // Simulate loading (read file to validate)
                 const reader = new FileReader();
                 reader.onload = function(e) {
-                    preview.src = e.target.result;
-                    preview.classList.remove('hidden');
-                    placeholder.classList.add('hidden');
-                    if (filenameEl) {
-                        filenameEl.textContent = file.name;
-                    }
+                    // Simulate a small delay for better UX
+                    setTimeout(() => {
+                        // Show success state
+                        loading.classList.add('hidden');
+                        loading.classList.remove('flex');
+                        success.classList.remove('hidden');
+                        success.classList.add('flex');
+                        label.classList.remove('border-primary');
+                        label.classList.add('border-green-500');
+                        
+                        if (filenameEl) {
+                            filenameEl.textContent = file.name;
+                        }
+                    }, 500);
+                }
+                reader.onerror = function() {
+                    alert('Gagal membaca file');
+                    resetUpload(prefix);
                 }
                 reader.readAsDataURL(file);
             } else {
-                preview.classList.add('hidden');
-                placeholder.classList.remove('hidden');
-                if (filenameEl) {
-                    filenameEl.textContent = '';
-                }
+                resetUpload(prefix);
+            }
+        }
+        
+        function resetUpload(prefix) {
+            const placeholder = document.getElementById(`${prefix}-placeholder`);
+            const loading = document.getElementById(`${prefix}-loading`);
+            const success = document.getElementById(`${prefix}-success`);
+            const filenameEl = document.getElementById(`${prefix}-filename`);
+            const label = document.getElementById(`${prefix}-label`);
+            
+            placeholder.classList.remove('hidden');
+            placeholder.classList.add('flex');
+            loading.classList.add('hidden');
+            loading.classList.remove('flex');
+            success.classList.add('hidden');
+            success.classList.remove('flex');
+            label.classList.remove('border-primary', 'border-green-500');
+            label.classList.add('border-[#d0e0e7]', 'dark:border-gray-700');
+            
+            if (filenameEl) {
+                filenameEl.textContent = '';
             }
         }
 
@@ -507,6 +633,140 @@
         document.addEventListener('DOMContentLoaded', function() {
             loadProvinsi();
         });
+
+        // Password toggle visibility
+        function togglePassword(inputId, iconId) {
+            const input = document.getElementById(inputId);
+            const icon = document.getElementById(iconId);
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.textContent = 'visibility';
+            } else {
+                input.type = 'password';
+                icon.textContent = 'visibility_off';
+            }
+        }
+
+        // Password validation
+        const passwordInput = document.getElementById('password-input');
+        const passwordConfirmInput = document.getElementById('password-confirm-input');
+
+        function updateRequirement(iconId, isValid) {
+            const icon = document.getElementById(iconId);
+            if (isValid) {
+                icon.textContent = 'check';
+                icon.classList.remove('text-red-500');
+                icon.classList.add('text-green-500');
+            } else {
+                icon.textContent = 'close';
+                icon.classList.remove('text-green-500');
+                icon.classList.add('text-red-500');
+            }
+        }
+
+        function validatePassword() {
+            const password = passwordInput.value;
+            const confirmPassword = passwordConfirmInput.value;
+
+            // Check lowercase
+            const hasLowercase = /[a-z]/.test(password);
+            updateRequirement('icon-lowercase', hasLowercase);
+
+            // Check uppercase
+            const hasUppercase = /[A-Z]/.test(password);
+            updateRequirement('icon-uppercase', hasUppercase);
+
+            // Check number
+            const hasNumber = /[0-9]/.test(password);
+            updateRequirement('icon-number', hasNumber);
+
+            // Check symbol
+            const hasSymbol = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password);
+            updateRequirement('icon-symbol', hasSymbol);
+
+            // Check length
+            const hasLength = password.length >= 8;
+            updateRequirement('icon-length', hasLength);
+
+            // Check match
+            const isMatch = password.length > 0 && confirmPassword.length > 0 && password === confirmPassword;
+            updateRequirement('icon-match', isMatch);
+
+            return hasLowercase && hasUppercase && hasNumber && hasSymbol && hasLength && isMatch;
+        }
+
+        passwordInput.addEventListener('input', validatePassword);
+        passwordConfirmInput.addEventListener('input', validatePassword);
+
+        // Phone validation
+        function validatePhone(input) {
+            const phone = input.value;
+            const errorEl = document.getElementById('phone-error');
+            const isValid = /^08[0-9]{8,11}$/.test(phone);
+            
+            if (phone.length > 0 && !isValid) {
+                errorEl.classList.remove('hidden');
+                input.classList.add('border-red-500');
+                input.classList.remove('border-[#d0e0e7]', 'dark:border-gray-700');
+            } else if (isValid) {
+                errorEl.classList.add('hidden');
+                input.classList.remove('border-red-500');
+                input.classList.add('border-green-500');
+            } else {
+                errorEl.classList.add('hidden');
+                input.classList.remove('border-red-500', 'border-green-500');
+                input.classList.add('border-[#d0e0e7]', 'dark:border-gray-700');
+            }
+            
+            // Only allow numbers
+            input.value = input.value.replace(/[^0-9]/g, '');
+        }
+
+        // Email validation
+        function validateEmail(input) {
+            const email = input.value;
+            const errorEl = document.getElementById('email-error');
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            const isValid = emailRegex.test(email);
+            
+            if (email.length > 0 && !isValid) {
+                errorEl.classList.remove('hidden');
+                input.classList.add('border-red-500');
+                input.classList.remove('border-[#d0e0e7]', 'dark:border-gray-700');
+            } else if (isValid) {
+                errorEl.classList.add('hidden');
+                input.classList.remove('border-red-500');
+                input.classList.add('border-green-500');
+            } else {
+                errorEl.classList.add('hidden');
+                input.classList.remove('border-red-500', 'border-green-500');
+                input.classList.add('border-[#d0e0e7]', 'dark:border-gray-700');
+            }
+        }
+
+        // KTP validation
+        function validateKTP(input) {
+            const ktp = input.value;
+            const errorEl = document.getElementById('ktp-error');
+            const isValid = /^[0-9]{16}$/.test(ktp);
+            
+            if (ktp.length > 0 && !isValid) {
+                errorEl.classList.remove('hidden');
+                input.classList.add('border-red-500');
+                input.classList.remove('border-[#d0e0e7]', 'dark:border-gray-700');
+            } else if (isValid) {
+                errorEl.classList.add('hidden');
+                input.classList.remove('border-red-500');
+                input.classList.add('border-green-500');
+            } else {
+                errorEl.classList.add('hidden');
+                input.classList.remove('border-red-500', 'border-green-500');
+                input.classList.add('border-[#d0e0e7]', 'dark:border-gray-700');
+            }
+            
+            // Only allow numbers and max 16 digits
+            input.value = input.value.replace(/[^0-9]/g, '').substring(0, 16);
+        }
     </script>
 </body>
 </html>

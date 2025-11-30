@@ -3,13 +3,13 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\PasswordResetCode;
+use App\Models\User;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Str;
-use Illuminate\Validation\Rules;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 
@@ -20,7 +20,10 @@ class NewPasswordController extends Controller
      */
     public function create(Request $request): View
     {
-        return view('auth.reset-password', ['request' => $request]);
+        return view('auth.reset-password', [
+            'email' => $request->query('email'),
+            'code' => $request->query('code'),
+        ]);
     }
 
     /**
@@ -31,35 +34,63 @@ class NewPasswordController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $request->validate([
-            'token' => 'required',
             'email' => 'required|email',
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'code' => 'required|string|size:6',
+            'password' => [
+                'required',
+                'confirmed',
+                'min:8',
+                'regex:/[a-z]/',      // must contain at least one lowercase letter
+                'regex:/[A-Z]/',      // must contain at least one uppercase letter
+                'regex:/[0-9]/',      // must contain at least one digit
+                'regex:/[@$!%*#?&^]/', // must contain a special character
+            ],
+        ], [
+            'password.min' => 'Password minimal 8 karakter.',
+            'password.regex' => 'Password harus mengandung huruf kecil, huruf besar, angka, dan simbol.',
+            'password.confirmed' => 'Konfirmasi password tidak cocok.',
         ]);
 
-        // Here we will attempt to reset the user's password. If it is successful we
-        // will update the password on an actual user model and persist it to the
-        // database. Otherwise we will parse the error and return the response.
-        $status = Password::reset(
-            $request->only('email', 'password', 'password_confirmation', 'token'),
-            function ($user) use ($request) {
-                $user->forceFill([
-                    'password' => Hash::make($request->password),
-                    'remember_token' => Str::random(60),
-                ])->save();
+        // Verify the code again
+        $resetCode = PasswordResetCode::where('email', $request->email)
+            ->where('code', $request->code)
+            ->first();
 
-                event(new PasswordReset($user));
-            }
-        );
-
-        // If the password was successfully reset, we will redirect the user back to
-        // the application's home authenticated view. If there is an error we can
-        // redirect them back to where they came from with their error message.
-        if ($status == Password::PASSWORD_RESET) {
-            return redirect()->route('login')->with('status', __($status));
+        if (!$resetCode) {
+            throw ValidationException::withMessages([
+                'code' => ['Kode verifikasi tidak valid.'],
+            ]);
         }
 
-        throw ValidationException::withMessages([
-            'email' => [trans($status)],
-        ]);
+        if ($resetCode->isExpired()) {
+            $resetCode->delete();
+            throw ValidationException::withMessages([
+                'code' => ['Kode verifikasi sudah kadaluarsa. Silakan minta kode baru.'],
+            ]);
+        }
+
+        // Find user by email (check both email and pic_email)
+        $user = User::where('email', $request->email)
+            ->orWhere('pic_email', $request->email)
+            ->first();
+
+        if (!$user) {
+            throw ValidationException::withMessages([
+                'email' => ['Email tidak ditemukan dalam sistem kami.'],
+            ]);
+        }
+
+        // Update the password
+        $user->forceFill([
+            'password' => Hash::make($request->password),
+            'remember_token' => Str::random(60),
+        ])->save();
+
+        // Delete the reset code
+        $resetCode->delete();
+
+        event(new PasswordReset($user));
+
+        return redirect()->route('login')->with('status', 'Password berhasil direset. Silakan login dengan password baru.');
     }
 }

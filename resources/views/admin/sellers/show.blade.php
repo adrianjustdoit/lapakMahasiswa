@@ -109,11 +109,6 @@
                         <p class="text-[#4d8199]">{{ $user->kota }}, {{ $user->provinsi }}</p>
                     </div>
                 </section>
-            </div>
-
-            <!-- Right Column - Documents & Actions -->
-            <div class="space-y-6">
-                <!-- Documents -->
                 <section class="border border-[#d0e0e7] dark:border-gray-700 rounded-2xl p-6">
                     <div class="flex items-center gap-3 mb-6">
                         <div class="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
@@ -154,6 +149,12 @@
                         </div>
                     </div>
                 </section>
+            </div>
+
+            <!-- Right Column - Documents & Actions -->
+            <div class="space-y-6">
+                <!-- Documents -->
+
 
                 <!-- Status & Actions -->
                 <section class="border border-[#d0e0e7] dark:border-gray-700 rounded-2xl p-6">

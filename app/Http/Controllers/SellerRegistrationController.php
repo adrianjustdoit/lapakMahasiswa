@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\SellerRegisteredMail;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
 
 class SellerRegistrationController extends Controller
 {
@@ -21,7 +22,7 @@ class SellerRegistrationController extends Controller
             'shop_name' => 'required|string|max:150',
             'shop_description' => 'nullable|string|max:500',
             'pic_name' => 'required|string|max:120',
-            'pic_phone' => 'required|string|max:30',
+            'pic_phone' => ['required', 'string', 'regex:/^08[0-9]{8,11}$/', 'min:10', 'max:13'],
             'pic_email' => 'required|email|max:150|unique:users,email',
             'pic_address' => 'required|string|max:500',
             'rt' => 'nullable|string|max:10',
@@ -30,21 +31,33 @@ class SellerRegistrationController extends Controller
             'kecamatan' => 'nullable|string|max:120',
             'kota' => 'nullable|string|max:120',
             'provinsi' => 'nullable|string|max:120',
-            'pic_id_number' => 'required|string|max:50',
+            'pic_id_number' => ['required', 'string', 'regex:/^[0-9]{16}$/'],
             'pic_id_photo' => 'required|image|max:2048',
             'pic_photo' => 'required|image|max:2048',
+            'password' => [
+                'required',
+                'string',
+                'min:8',
+                'confirmed',
+                'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};\':"\\|,.<>\/?]).+$/'
+            ],
+        ], [
+            'pic_phone.regex' => 'Nomor telepon harus diawali 08 dan terdiri dari 10-13 digit.',
+            'pic_phone.min' => 'Nomor telepon minimal 10 digit.',
+            'pic_phone.max' => 'Nomor telepon maksimal 13 digit.',
+            'pic_id_number.regex' => 'Nomor KTP harus terdiri dari 16 digit angka.',
+            'password.regex' => 'Password harus mengandung huruf besar, huruf kecil, angka, dan simbol.',
+            'password.confirmed' => 'Konfirmasi password tidak cocok.',
         ]);
 
         // Store images
         $idPhotoPath = $request->file('pic_id_photo')->store('seller_ids', 'public');
         $picPhotoPath = $request->file('pic_photo')->store('seller_pic', 'public');
 
-        $tempPassword = Str::random(12); // not yet communicated until approval
-
         $user = User::create([
             'name' => $data['pic_name'], // internal name uses PIC name
             'email' => $data['pic_email'],
-            'password' => Hash::make($tempPassword),
+            'password' => Hash::make($data['password']),
             'shop_name' => $data['shop_name'],
             'shop_description' => $data['shop_description'] ?? null,
             'pic_name' => $data['pic_name'],
@@ -62,6 +75,9 @@ class SellerRegistrationController extends Controller
             'pic_photo_path' => $picPhotoPath,
             'seller_status' => 'pending',
         ]);
+
+        // Send registration confirmation email
+        Mail::to($user->pic_email)->send(new SellerRegisteredMail($user));
 
         return redirect()->route('seller.register')->with('status', 'Registrasi berhasil dikirim. Menunggu verifikasi admin.');
     }

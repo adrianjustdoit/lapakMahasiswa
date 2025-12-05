@@ -24,7 +24,7 @@
             </div>
         @endif
 
-        <form action="{{ route('seller.products.store') }}" method="POST" enctype="multipart/form-data" class="space-y-5">
+        <form id="seller-product-form" action="{{ route('seller.products.store') }}" method="POST" enctype="multipart/form-data" class="space-y-5">
             @csrf
 
             <div>
@@ -439,6 +439,7 @@
 
                     // Update primary badges
                     updatePrimaryBadges();
+                    updateFormData();
 
                 }, 500 + (index * 200)); // Stagger animation
             };
@@ -493,8 +494,11 @@
     }
 
     // Update form data before submit
-    document.querySelector('form').addEventListener('submit', function(e) {
-        updateFormData();
-    });
+    const productForm = document.getElementById('seller-product-form');
+    if (productForm) {
+        productForm.addEventListener('submit', function () {
+            updateFormData();
+        });
+    }
 </script>
 @endpush

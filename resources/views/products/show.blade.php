@@ -46,11 +46,12 @@
     <!-- Header sederhana Lapak Mahasiswa -->
     <header class="mb-6">
         <div class="flex items-center justify-between">
-            <a href="{{ url('/') }}" class="flex items-center space-x-3 group">
-                <span class="material-symbols-outlined text-primary text-4xl group-hover:scale-105 transition-transform">store</span>
-                <div>
-                    <h1 class="text-2xl font-bold text-primary group-hover:underline">Lapak Mahasiswa</h1>
-                    <p class="text-xs text-slate-500">Marketplace khusus civitas kampus</p>
+            <a href="{{ route('home') }}" title="Kembali ke beranda"
+               class="flex items-center gap-3 px-2 py-1 rounded-lg text-3xl font-bold font-display text-[#0e171b] dark:text-white transition-all duration-150 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60">
+                <span class="material-symbols-outlined text-4xl text-primary/80">storefront</span>
+                <div class="flex flex-col">
+                    <span>LapakMahasiswa</span>
+                    <span class="text-xs font-medium text-slate-500 leading-tight">Marketplace civitas kampus</span>
                 </div>
             </a>
         </div>
@@ -181,135 +182,150 @@
                     {!! nl2br(e($product->description)) !!}
                 </div>
 
-                <div id="review" class="py-6">
-                    <h3 class="text-lg font-semibold text-slate-900 mb-4">Ulasan Pengunjung</h3>
+                <div id="review" class="py-10 space-y-6">
+                    <h3 class="text-lg font-semibold text-slate-900">Ulasan Pengunjung</h3>
 
                     <!-- Ringkasan rating -->
-                    <div class="flex flex-col md:flex-row md:items-start md:space-x-6 mb-6">
-                        <div class="text-center mb-4 md:mb-0">
-                            <div class="flex items-center justify-center text-4xl font-bold text-slate-900">
-                                <span class="material-symbols-outlined text-yellow-400 text-3xl mr-1">star</span>
-                                {{ number_format($averageRating, 1) }}
-                                <span class="text-base font-normal text-slate-500 ml-2">/5.0</span>
-                            </div>
-                            <p class="text-xs text-slate-500 mt-1">
-                                {{ $reviewsCount }} rating
-                            </p>
-                        </div>
-                        <div class="flex-grow">
-                            @for($i = 5; $i >= 1; $i--)
-                                @php
-                                    $count = $ratingCounts[$i] ?? 0;
-                                    $percent = $reviewsCount > 0 ? ($count / max($reviewsCount,1)) * 100 : 0;
-                                @endphp
-                                <div class="flex items-center text-xs mb-1">
-                                    <div class="flex items-center text-yellow-400 w-10">
-                                        <span class="material-symbols-outlined text-sm">star</span>
-                                        <span class="ml-1">{{ $i }}</span>
+                    <div class="rounded-2xl border border-slate-200 bg-white shadow-sm p-6">
+                        <div class="flex flex-col md:flex-row md:items-center md:space-x-8 gap-6">
+                            <div class="w-full md:w-auto">
+                                <div class="rounded-2xl bg-gradient-to-br from-primary/15 to-primary/5 px-6 py-5 text-center">
+                                    <div class="text-5xl font-extrabold text-primary flex items-center justify-center">
+                                        <span class="material-symbols-outlined text-yellow-400 text-4xl mr-2">star</span>
+                                        {{ number_format($averageRating, 1) }}
                                     </div>
-                                    <div class="w-full bg-slate-200 rounded-full h-1.5 mx-2">
-                                        <div class="bg-primary h-1.5 rounded-full" style="width: {{ $percent }}%"></div>
-                                    </div>
-                                    <span class="text-slate-500">({{ $count }})</span>
+                                    <p class="text-xs uppercase tracking-widest text-slate-500 mt-2">Dari 5 bintang</p>
+                                    <p class="text-xs text-slate-500 mt-1">{{ $reviewsCount }} rating masuk</p>
                                 </div>
-                            @endfor
+                            </div>
+
+                            <div class="flex-1 space-y-2">
+                                @for($i = 5; $i >= 1; $i--)
+                                    @php
+                                        $count = $ratingCounts[$i] ?? 0;
+                                        $percent = $reviewsCount > 0 ? ($count / max($reviewsCount,1)) * 100 : 0;
+                                    @endphp
+                                    <div class="flex items-center text-xs gap-3">
+                                        <div class="flex items-center text-yellow-400 shrink-0 w-16">
+                                            <span class="material-symbols-outlined text-base">star</span>
+                                            <span class="ml-1 font-semibold text-slate-700">{{ $i }}</span>
+                                        </div>
+                                        <div class="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+                                            <div class="h-full bg-gradient-to-r from-primary to-cyan-400 rounded-full" style="width: {{ $percent }}%"></div>
+                                        </div>
+                                        <span class="text-slate-500 min-w-[40px] text-right">{{ $count }}</span>
+                                    </div>
+                                @endfor
+                            </div>
                         </div>
                     </div>
 
-                    <!-- Notifikasi sukses -->
                     @if(session('status'))
-                        <div class="mb-4 text-sm text-green-700 bg-green-50 border border-green-200 px-3 py-2 rounded">
+                        <div class="rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700">
                             {{ session('status') }}
                         </div>
                     @endif
 
-                    <!-- Form ulasan tamu -->
-                    <div class="mb-8 border border-slate-200 rounded-lg p-4 bg-slate-50">
-                        <h4 class="font-semibold text-slate-900 mb-2">Tulis Ulasanmu</h4>
-                        <p class="text-xs text-slate-500 mb-3">
-                            Tidak perlu login, cukup isi nama dan email.
-                        </p>
-                        <form method="POST" action="{{ route('products.reviews.store', $product) }}" class="space-y-3">
-                            @csrf
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div class="grid lg:grid-cols-2 gap-6">
+                        <!-- Form ulasan tamu -->
+                        <div class="border border-slate-200 rounded-2xl bg-white shadow-sm p-5">
+                            <div class="flex items-center justify-between mb-4">
                                 <div>
-                                    <label class="block text-xs font-medium text-slate-700">Nama</label>
-                                    <input name="name" value="{{ old('name') }}"
-                                           class="mt-1 block w-full border border-slate-300 rounded-md px-3 py-2 text-sm">
-                                    @error('name')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
+                                    <h4 class="font-semibold text-slate-900">Tulis Ulasanmu</h4>
+                                    <p class="text-xs text-slate-500">Tidak perlu login, isi identitas singkat saja.</p>
                                 </div>
-                                <div>
-                                    <label class="block text-xs font-medium text-slate-700">Email</label>
-                                    <input type="email" name="email" value="{{ old('email') }}"
-                                           class="mt-1 block w-full border border-slate-300 rounded-md px-3 py-2 text-sm">
-                                    @error('email')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
-                                </div>
+                                <span class="material-symbols-outlined text-primary">rate_review</span>
                             </div>
-
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                                <div>
-                                    <label class="block text-xs font-medium text-slate-700">Provinsi <span class="text-slate-400">(opsional)</span></label>
-                                    <select name="provinsi" id="provinsi-review"
-                                            class="mt-1 block w-full border border-slate-300 rounded-md px-2 py-2 text-sm">
-                                        <option value="">-- Pilih Provinsi --</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label class="block text-xs font-medium text-slate-700">Rating</label>
-                                    <select name="rating"
-                                            class="mt-1 block w-full border border-slate-300 rounded-md px-2 py-2 text-sm">
-                                        @for($i = 5; $i >= 1; $i--)
-                                            <option value="{{ $i }}" {{ old('rating') == $i ? 'selected' : '' }}>
-                                                {{ $i }} Bintang
-                                            </option>
-                                        @endfor
-                                    </select>
-                                    @error('rating')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
-                                </div>
-                            </div>
-
-                            <div>
-                                <label class="block text-xs font-medium text-slate-700">Komentar</label>
-                                <textarea name="comment" rows="3"
-                                          class="mt-1 block w-full border border-slate-300 rounded-md px-3 py-2 text-sm">{{ old('comment') }}</textarea>
-                                @error('comment')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
-                            </div>
-
-                            <button type="submit"
-                                    class="inline-flex items-center px-4 py-2 bg-primary text-white text-sm font-semibold rounded-md hover:bg-blue-700">
-                                Kirim Ulasan
-                            </button>
-                        </form>
-                    </div>
-
-                    <!-- Daftar ulasan -->
-                    <div class="space-y-4">
-                        @forelse($product->guestReviews()->latest()->get() as $review)
-                            <div class="border-b border-slate-200 pb-4">
-                                <div class="flex items-center justify-between">
+                            <form method="POST" action="{{ route('products.reviews.store', $product) }}" class="space-y-4">
+                                @csrf
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                                     <div>
-                                        <p class="font-semibold text-slate-900">{{ $review->name }}</p>
-                                        <div class="flex items-center text-xs text-slate-500 mt-1">
-                                            <div class="flex text-yellow-400">
-                                                @for($i = 1; $i <= 5; $i++)
-                                                    <span class="material-symbols-outlined text-sm">
-                                                        {{ $i <= $review->rating ? 'star' : 'star_border' }}
-                                                    </span>
-                                                @endfor
-                                            </div>
-                                            <span class="ml-2">
-                                                {{ $review->created_at?->diffForHumans() }}
-                                            </span>
-                                        </div>
+                                        <label class="block text-xs font-semibold text-slate-600">Nama</label>
+                                        <input name="name" value="{{ old('name') }}"
+                                               class="mt-1 block w-full border border-slate-300 rounded-xl px-3 py-2 text-sm focus:border-primary focus:ring-1 focus:ring-primary/40">
+                                        @error('name')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-semibold text-slate-600">Email</label>
+                                        <input type="email" name="email" value="{{ old('email') }}"
+                                               class="mt-1 block w-full border border-slate-300 rounded-xl px-3 py-2 text-sm focus:border-primary focus:ring-1 focus:ring-primary/40">
+                                        @error('email')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
                                     </div>
                                 </div>
-                                <p class="mt-3 text-sm text-slate-700">
-                                    {{ $review->comment }}
-                                </p>
+
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                    <div>
+                                        <label class="block text-xs font-semibold text-slate-600">Provinsi <span class="text-slate-400">(opsional)</span></label>
+                                        <select name="provinsi" id="provinsi-review"
+                                                class="mt-1 block w-full border border-slate-300 rounded-xl px-2 py-2 text-sm focus:border-primary focus:ring-1 focus:ring-primary/40">
+                                            <option value="">-- Pilih Provinsi --</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-semibold text-slate-600">Rating</label>
+                                        <select name="rating"
+                                                class="mt-1 block w-full border border-slate-300 rounded-xl px-2 py-2 text-sm focus:border-primary focus:ring-1 focus:ring-primary/40">
+                                            @for($i = 5; $i >= 1; $i--)
+                                                <option value="{{ $i }}" {{ old('rating') == $i ? 'selected' : '' }}>
+                                                    {{ $i }} Bintang
+                                                </option>
+                                            @endfor
+                                        </select>
+                                        @error('rating')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-600">Komentar</label>
+                                    <textarea name="comment" rows="3"
+                                              class="mt-1 block w-full border border-slate-300 rounded-xl px-3 py-3 text-sm focus:border-primary focus:ring-1 focus:ring-primary/40">{{ old('comment') }}</textarea>
+                                    @error('comment')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
+                                </div>
+
+                                <button type="submit"
+                                        class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-primary text-white text-sm font-semibold shadow hover:bg-primary/90">
+                                    <span class="material-symbols-outlined text-base">send</span>
+                                    Kirim Ulasan
+                                </button>
+                            </form>
+                        </div>
+
+                        <!-- Daftar ulasan -->
+                        <div class="border border-slate-200 rounded-2xl bg-white shadow-sm p-5">
+                            <div class="flex items-center justify-between mb-4">
+                                <h4 class="font-semibold text-slate-900">Apa kata mereka?</h4>
+                                <span class="text-xs text-slate-400">Diurutkan terbaru</span>
                             </div>
-                        @empty
-                            <p class="text-sm text-slate-500">Belum ada ulasan. Jadilah yang pertama memberi review.</p>
-                        @endforelse
+                            <div class="space-y-4 max-h-[480px] overflow-y-auto pr-2">
+                                @forelse($product->guestReviews()->latest()->get() as $review)
+                                    <div class="rounded-xl border border-slate-100 bg-slate-50/60 p-4">
+                                        <div class="flex items-center justify-between">
+                                            <div>
+                                                <p class="font-semibold text-slate-900">{{ $review->name }}</p>
+                                                <div class="flex items-center text-xs text-slate-500 mt-1">
+                                                    <div class="flex text-yellow-400">
+                                                        @for($i = 1; $i <= 5; $i++)
+                                                            <span class="material-symbols-outlined text-sm">
+                                                                {{ $i <= $review->rating ? 'star' : 'star_border' }}
+                                                            </span>
+                                                        @endfor
+                                                    </div>
+                                                    <span class="ml-2">{{ $review->created_at?->diffForHumans() }}</span>
+                                                </div>
+                                            </div>
+                                            @if($review->provinsi)
+                                                <span class="text-xs font-medium text-primary bg-primary/10 rounded-full px-3 py-1">{{ $review->provinsi }}</span>
+                                            @endif
+                                        </div>
+                                        <p class="mt-3 text-sm text-slate-700 leading-relaxed">
+                                            {{ $review->comment }}
+                                        </p>
+                                    </div>
+                                @empty
+                                    <p class="text-sm text-slate-500">Belum ada ulasan. Jadilah yang pertama memberi review.</p>
+                                @endforelse
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

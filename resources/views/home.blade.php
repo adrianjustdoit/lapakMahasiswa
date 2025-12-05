@@ -7,9 +7,10 @@
     <!-- Header -->
     <header class="flex items-center justify-between py-6">
         <div class="flex items-center gap-6">
-            <div class="text-3xl font-bold font-display text-[#0e171b] dark:text-white">
+            <a href="{{ route('home') }}" class="flex items-center gap-2 text-3xl font-bold font-display text-[#0e171b] dark:text-white transition-colors hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 rounded-lg px-1" title="Kembali ke beranda">
+                <span class="material-symbols-outlined text-4xl text-primary/80">storefront</span>
                 LapakMahasiswa
-            </div>
+            </a>
             
             <!-- Kategori Mega Menu -->
             <div class="relative hidden md:block" x-data="{ open: false, activeCategory: null }" @mouseleave="open = false; activeCategory = null">

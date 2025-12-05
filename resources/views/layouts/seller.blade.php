@@ -8,7 +8,8 @@
     <title>@yield('title', 'Seller - LapakMahasiswa')</title>
 
     <!-- Favicon -->
-    <link rel="icon" type="image/svg+xml" href="{{ asset('images/favicon.svg') }}">
+    <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
+    <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -86,9 +87,16 @@
                     Dashboard
                 </a>
 
+                <a href="{{ route('seller.products.index') }}" 
+                   class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200
+                          @if(request()->routeIs('seller.products.index') || request()->routeIs('seller.products.edit')) bg-primary text-white shadow-lg shadow-primary/30 @else text-[#4d8199] hover:bg-[#e8eef3] hover:text-[#0e171b] @endif">
+                    <span class="material-symbols-outlined text-xl">inventory_2</span>
+                    Lihat Produk
+                </a>
+
                 <a href="{{ route('seller.products.create') }}" 
                    class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200
-                          @if(request()->routeIs('seller.products.*')) bg-primary text-white shadow-lg shadow-primary/30 @else text-[#4d8199] hover:bg-[#e8eef3] hover:text-[#0e171b] @endif">
+                          @if(request()->routeIs('seller.products.create')) bg-primary text-white shadow-lg shadow-primary/30 @else text-[#4d8199] hover:bg-[#e8eef3] hover:text-[#0e171b] @endif">
                     <span class="material-symbols-outlined text-xl">add_box</span>
                     Tambah Produk
                 </a>

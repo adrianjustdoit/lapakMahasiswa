@@ -198,4 +198,159 @@ class ProductController extends Controller
             ->route('products.show', $product)
             ->with('status', 'Terima kasih, ulasanmu sudah tersimpan.');
     }
+
+    /**
+     * Tampilkan daftar produk milik seller yang login
+     */
+    public function sellerIndex(Request $request)
+    {
+        $user = $request->user();
+        
+        $query = Product::where('user_id', $user->id)
+            ->with('photos')
+            ->latest();
+        
+        // Search filter
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('category', 'like', "%{$search}%")
+                  ->orWhere('showcase', 'like', "%{$search}%");
+            });
+        }
+        
+        // Category filter
+        if ($request->filled('category')) {
+            $query->where('category', $request->category);
+        }
+        
+        $products = $query->paginate(12);
+        
+        return view('seller.products.index', compact('products'));
+    }
+
+    /**
+     * Tampilkan form edit produk
+     */
+    public function edit(Request $request, Product $product)
+    {
+        // Pastikan produk milik seller yang login
+        if ($product->user_id !== $request->user()->id) {
+            abort(403, 'Anda tidak memiliki akses ke produk ini.');
+        }
+        
+        $product->load('photos');
+        
+        return view('seller.products.edit', compact('product'));
+    }
+
+    /**
+     * Update produk
+     */
+    public function update(Request $request, Product $product)
+    {
+        // Pastikan produk milik seller yang login
+        if ($product->user_id !== $request->user()->id) {
+            abort(403, 'Anda tidak memiliki akses ke produk ini.');
+        }
+        
+        $validCategoriesString = implode(',', self::$validCategories);
+        
+        $data = $request->validate([
+            'name'        => 'required|string|max:255',
+            'category'    => 'required|string|in:' . $validCategoriesString,
+            'description' => 'nullable|string',
+            'shop_name'   => 'nullable|string|max:255',
+            'condition'   => 'nullable|string|max:50',
+            'min_order'   => 'nullable|integer|min:1',
+            'showcase'    => 'nullable|string|max:255',
+            'price'       => 'required|integer|min:0',
+            'stock'       => 'nullable|integer|min:0',
+            'photos'      => 'nullable|array',
+            'photos.*'    => 'image|mimes:jpg,jpeg,png|max:2048',
+            'delete_photos' => 'nullable|array',
+            'delete_photos.*' => 'integer|exists:product_photos,id',
+        ]);
+
+        $product->update([
+            'name'           => $data['name'],
+            'category'       => $data['category'],
+            'description'    => $data['description'] ?? null,
+            'shop_name'      => $data['shop_name'] ?? $request->user()->shop_name,
+            'condition'      => $data['condition'] ?? 'baru',
+            'min_order'      => $data['min_order'] ?? 1,
+            'showcase'       => $data['showcase'] ?? null,
+            'price'          => $data['price'],
+            'stock'          => $data['stock'] ?? 0,
+        ]);
+
+        // Hapus foto yang dipilih
+        if (!empty($data['delete_photos'])) {
+            $photosToDelete = ProductPhoto::whereIn('id', $data['delete_photos'])
+                ->where('product_id', $product->id)
+                ->get();
+            
+            foreach ($photosToDelete as $photo) {
+                // Hapus file dari storage
+                if (\Storage::disk('public')->exists($photo->path)) {
+                    \Storage::disk('public')->delete($photo->path);
+                }
+                $photo->delete();
+            }
+        }
+
+        // Upload foto baru
+        if ($request->hasFile('photos')) {
+            $existingPhotosCount = $product->photos()->count();
+            
+            foreach ($request->file('photos') as $index => $file) {
+                $path = $file->store('products', 'public');
+
+                ProductPhoto::create([
+                    'product_id' => $product->id,
+                    'path'       => $path,
+                    'is_cover'   => $existingPhotosCount === 0 && $index === 0,
+                ]);
+                
+                $existingPhotosCount++;
+            }
+        }
+
+        // Pastikan ada foto cover
+        $product->refresh();
+        if ($product->photos()->where('is_cover', true)->count() === 0) {
+            $firstPhoto = $product->photos()->first();
+            if ($firstPhoto) {
+                $firstPhoto->update(['is_cover' => true]);
+            }
+        }
+
+        return redirect()->route('seller.products.index')
+            ->with('status', 'Produk berhasil diperbarui.');
+    }
+
+    /**
+     * Hapus produk
+     */
+    public function destroy(Request $request, Product $product)
+    {
+        // Pastikan produk milik seller yang login
+        if ($product->user_id !== $request->user()->id) {
+            abort(403, 'Anda tidak memiliki akses ke produk ini.');
+        }
+
+        // Hapus semua foto produk dari storage
+        foreach ($product->photos as $photo) {
+            if (\Storage::disk('public')->exists($photo->path)) {
+                \Storage::disk('public')->delete($photo->path);
+            }
+        }
+
+        // Hapus produk (photos akan terhapus otomatis karena cascade)
+        $product->delete();
+
+        return redirect()->route('seller.products.index')
+            ->with('status', 'Produk berhasil dihapus.');
+    }
 }

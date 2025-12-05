@@ -141,6 +141,14 @@ Route::middleware(['auth'])->group(function () {
         ->name('seller.products.create');
     Route::post('/seller/products', [ProductController::class, 'store'])
         ->name('seller.products.store');
+    Route::get('/seller/products', [ProductController::class, 'sellerIndex'])
+        ->name('seller.products.index');
+    Route::get('/seller/products/{product}/edit', [ProductController::class, 'edit'])
+        ->name('seller.products.edit');
+    Route::put('/seller/products/{product}', [ProductController::class, 'update'])
+        ->name('seller.products.update');
+    Route::delete('/seller/products/{product}', [ProductController::class, 'destroy'])
+        ->name('seller.products.destroy');
     
     // Seller settings
     Route::get('/seller/settings', [SellerSettingsController::class, 'index'])

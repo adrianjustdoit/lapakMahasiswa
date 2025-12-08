@@ -256,10 +256,16 @@
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                                     <div>
                                         <label class="block text-xs font-semibold text-slate-600">Provinsi <span class="text-slate-400">(opsional)</span></label>
-                                        <select name="provinsi" id="provinsi-review"
-                                                class="mt-1 block w-full border border-slate-300 rounded-xl px-2 py-2 text-sm focus:border-primary focus:ring-1 focus:ring-primary/40">
-                                            <option value="">-- Pilih Provinsi --</option>
-                                        </select>
+                                        <div class="relative mt-1">
+                                            <select name="provinsi" id="provinsi-review"
+                                                    class="appearance-none cursor-pointer block w-full border border-slate-300 rounded-xl px-3 py-2 text-sm bg-white text-slate-700 focus:border-primary focus:ring-1 focus:ring-primary/40 disabled:opacity-60"
+                                                    disabled>
+                                                <option value="">-- Pilih Provinsi --</option>
+                                            </select>
+                                            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-slate-400">
+                                                <span class="material-symbols-outlined text-xl" id="provinsi-review-icon">expand_more</span>
+                                            </div>
+                                        </div>
                                     </div>
                                     <div>
                                         <label class="block text-xs font-semibold text-slate-600">Rating</label>
@@ -352,22 +358,71 @@
 </div>
 
 <script>
-// Load provinsi untuk form review
 document.addEventListener('DOMContentLoaded', function() {
     const provinsiSelect = document.getElementById('provinsi-review');
-    if (provinsiSelect) {
-        fetch('/api/region/provinces')
-            .then(response => response.json())
-            .then(provinces => {
-                provinces.forEach(prov => {
-                    const option = document.createElement('option');
-                    option.value = prov.name;
-                    option.textContent = prov.name;
-                    provinsiSelect.appendChild(option);
-                });
-            })
-            .catch(error => console.error('Error loading provinces:', error));
+    const provinsiIcon = document.getElementById('provinsi-review-icon');
+
+    if (!provinsiSelect) {
+        return;
     }
+
+    const API_ENDPOINT = '/api/region/provinces';
+    const specialCases = ['DKI', 'DIY', 'DI'];
+
+    const formatName = (name = '') => name.split(' ').map(word => {
+        if (specialCases.includes(word.toUpperCase())) {
+            return word.toUpperCase();
+        }
+        return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+    }).join(' ');
+
+    const setLoading = (state) => {
+        provinsiSelect.disabled = state;
+        if (provinsiIcon) {
+            provinsiIcon.textContent = state ? 'progress_activity' : 'expand_more';
+            provinsiIcon.classList.toggle('animate-spin', state);
+        }
+    };
+
+    const normalizeList = (payload) => {
+        if (Array.isArray(payload)) {
+            return payload;
+        }
+        if (Array.isArray(payload?.data)) {
+            return payload.data;
+        }
+        return [];
+    };
+
+    const loadProvinces = async () => {
+        setLoading(true);
+        try {
+            provinsiSelect.innerHTML = '<option value="">-- Pilih Provinsi --</option>';
+            const response = await fetch(API_ENDPOINT);
+            if (!response.ok) {
+                throw new Error('Failed to fetch province list');
+            }
+            const data = await response.json();
+            const list = normalizeList(data);
+
+            list.forEach((prov) => {
+                const option = document.createElement('option');
+                option.value = prov.name;
+                option.textContent = formatName(prov.name);
+                provinsiSelect.appendChild(option);
+            });
+        } catch (error) {
+            console.error('Error loading provinces:', error);
+            const fallback = document.createElement('option');
+            fallback.value = '';
+            fallback.textContent = 'Gagal memuat data';
+            provinsiSelect.appendChild(fallback);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    loadProvinces();
 });
 </script>
 </body>

@@ -220,7 +220,6 @@
                     <th>Email</th>
                     <th>Telepon</th>
                     <th>Provinsi</th>
-                    <th>Kota</th>
                 </tr>
             </thead>
             <tbody>
@@ -232,7 +231,6 @@
                     <td>{{ $seller->email }}</td>
                     <td>{{ $seller->pic_phone ?? '-' }}</td>
                     <td>{{ $seller->provinsi ?? '-' }}</td>
-                    <td>{{ $seller->kota ?? '-' }}</td>
                 </tr>
                 @endforeach
             </tbody>

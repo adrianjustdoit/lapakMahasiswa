@@ -31,11 +31,12 @@ class Product extends Model
     public static function categories(): array
     {
         return [
-            'elektronik' => 'Elektronik',
             'fashion' => 'Fashion',
-            'makanan' => 'Makanan',
-            'akademik' => 'Akademik',
-            'rumahan' => 'Rumahan',
+            'kecantikan' => 'Kecantikan',
+            'rumah' => 'Rumah',
+            'elektronik' => 'Elektronik',
+            'hobi' => 'Hobi',
+            'lainnya' => 'Lainnya',
         ];
     }
 

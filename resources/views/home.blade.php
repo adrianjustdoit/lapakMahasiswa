@@ -479,7 +479,7 @@
                         </a>
                     @endif
                 </div>
-                <span class="text-xs md:text-sm text-[#4d8199]">{{ $products->count() }} produk</span>
+                <span class="text-xs md:text-sm text-[#4d8199]">{{ $products->total() }} produk</span>
             </div>
 
             @if($products->isEmpty())
@@ -500,9 +500,11 @@
                             <div class="relative w-full aspect-square bg-[#e8eef3] flex items-center justify-center overflow-hidden">
                                 @php
                                     $photo = optional($product->photos->first())->path;
+                                    // Cek apakah path dimulai dengan 'images/' (public folder) atau perlu storage
+                                    $photoUrl = $photo ? (str_starts_with($photo, 'images/') ? asset($photo) : asset('storage/'.$photo)) : null;
                                 @endphp
-                                @if($photo)
-                                    <img src="{{ asset('storage/'.$photo) }}" alt="{{ $product->name }}" class="w-full h-full object-cover max-w-full max-h-full">
+                                @if($photoUrl)
+                                    <img src="{{ $photoUrl }}" alt="{{ $product->name }}" class="w-full h-full object-cover max-w-full max-h-full">
                                 @else
                                     <span class="material-symbols-outlined text-4xl md:text-6xl text-gray-300">image</span>
                                 @endif
@@ -529,6 +531,88 @@
                         </a>
                     @endforeach
                 </div>
+
+                <!-- Pagination -->
+                @if($products->hasPages())
+                    <div class="mt-8 flex flex-col items-center gap-4">
+                        <!-- Info halaman -->
+                        <div class="text-sm text-[#4d8199]">
+                            Menampilkan {{ $products->firstItem() }} - {{ $products->lastItem() }} dari {{ $products->total() }} produk
+                        </div>
+                        
+                        <!-- Tombol navigasi -->
+                        <div class="flex flex-wrap items-center justify-center gap-2">
+                            {{-- Tombol Previous --}}
+                            @if($products->onFirstPage())
+                                <span class="inline-flex items-center gap-1 px-4 py-2 text-sm font-medium text-gray-400 bg-gray-100 dark:bg-gray-700 dark:text-gray-500 rounded-lg cursor-not-allowed">
+                                    <span class="material-symbols-outlined text-lg">chevron_left</span>
+                                    <span class="hidden sm:inline">Sebelumnya</span>
+                                </span>
+                            @else
+                                <a href="{{ $products->previousPageUrl() }}" class="inline-flex items-center gap-1 px-4 py-2 text-sm font-medium text-[#0e171b] dark:text-white bg-white dark:bg-gray-800 border border-[#d0e0e7] dark:border-gray-600 rounded-lg hover:bg-primary hover:text-white hover:border-primary transition-all duration-200">
+                                    <span class="material-symbols-outlined text-lg">chevron_left</span>
+                                    <span class="hidden sm:inline">Sebelumnya</span>
+                                </a>
+                            @endif
+
+                            {{-- Nomor halaman --}}
+                            <div class="flex items-center gap-1">
+                                @php
+                                    $currentPage = $products->currentPage();
+                                    $lastPage = $products->lastPage();
+                                    $start = max(1, $currentPage - 2);
+                                    $end = min($lastPage, $currentPage + 2);
+                                @endphp
+
+                                {{-- Halaman pertama --}}
+                                @if($start > 1)
+                                    <a href="{{ $products->url(1) }}" class="inline-flex items-center justify-center w-10 h-10 text-sm font-medium text-[#0e171b] dark:text-white bg-white dark:bg-gray-800 border border-[#d0e0e7] dark:border-gray-600 rounded-lg hover:bg-primary hover:text-white hover:border-primary transition-all duration-200">
+                                        1
+                                    </a>
+                                    @if($start > 2)
+                                        <span class="px-2 text-[#4d8199]">...</span>
+                                    @endif
+                                @endif
+
+                                {{-- Halaman tengah --}}
+                                @for($page = $start; $page <= $end; $page++)
+                                    @if($page == $currentPage)
+                                        <span class="inline-flex items-center justify-center w-10 h-10 text-sm font-bold text-white bg-primary rounded-lg shadow-md">
+                                            {{ $page }}
+                                        </span>
+                                    @else
+                                        <a href="{{ $products->url($page) }}" class="inline-flex items-center justify-center w-10 h-10 text-sm font-medium text-[#0e171b] dark:text-white bg-white dark:bg-gray-800 border border-[#d0e0e7] dark:border-gray-600 rounded-lg hover:bg-primary hover:text-white hover:border-primary transition-all duration-200">
+                                            {{ $page }}
+                                        </a>
+                                    @endif
+                                @endfor
+
+                                {{-- Halaman terakhir --}}
+                                @if($end < $lastPage)
+                                    @if($end < $lastPage - 1)
+                                        <span class="px-2 text-[#4d8199]">...</span>
+                                    @endif
+                                    <a href="{{ $products->url($lastPage) }}" class="inline-flex items-center justify-center w-10 h-10 text-sm font-medium text-[#0e171b] dark:text-white bg-white dark:bg-gray-800 border border-[#d0e0e7] dark:border-gray-600 rounded-lg hover:bg-primary hover:text-white hover:border-primary transition-all duration-200">
+                                        {{ $lastPage }}
+                                    </a>
+                                @endif
+                            </div>
+
+                            {{-- Tombol Next --}}
+                            @if($products->hasMorePages())
+                                <a href="{{ $products->nextPageUrl() }}" class="inline-flex items-center gap-1 px-4 py-2 text-sm font-medium text-[#0e171b] dark:text-white bg-white dark:bg-gray-800 border border-[#d0e0e7] dark:border-gray-600 rounded-lg hover:bg-primary hover:text-white hover:border-primary transition-all duration-200">
+                                    <span class="hidden sm:inline">Selanjutnya</span>
+                                    <span class="material-symbols-outlined text-lg">chevron_right</span>
+                                </a>
+                            @else
+                                <span class="inline-flex items-center gap-1 px-4 py-2 text-sm font-medium text-gray-400 bg-gray-100 dark:bg-gray-700 dark:text-gray-500 rounded-lg cursor-not-allowed">
+                                    <span class="hidden sm:inline">Selanjutnya</span>
+                                    <span class="material-symbols-outlined text-lg">chevron_right</span>
+                                </span>
+                            @endif
+                        </div>
+                    </div>
+                @endif
             @endif
         </section>
     </main>

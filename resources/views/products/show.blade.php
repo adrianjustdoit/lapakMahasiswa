@@ -84,11 +84,12 @@
                     <!-- Foto utama -->
                     @php
                         $mainPhoto = $product->photos->first();
+                        $mainPhotoUrl = $mainPhoto ? (str_starts_with($mainPhoto->path, 'images/') ? asset($mainPhoto->path) : asset('storage/'.$mainPhoto->path)) : 'https://via.placeholder.com/400x400?text=Produk';
                     @endphp
                     <div class="relative w-full aspect-square bg-slate-100 rounded-lg border border-slate-200 overflow-hidden">
                         <img
                             id="main-product-image"
-                            src="{{ $mainPhoto ? asset('storage/'.$mainPhoto->path) : 'https://via.placeholder.com/400x400?text=Produk' }}"
+                            src="{{ $mainPhotoUrl }}"
                             alt="{{ $product->name }}"
                             class="w-full h-full object-contain max-w-full max-h-full"
                         />
@@ -96,10 +97,13 @@
                     <!-- Thumbnail -->
                     <div class="grid grid-cols-4 gap-2 mt-4">
                         @foreach($product->photos as $photo)
+                            @php
+                                $thumbUrl = str_starts_with($photo->path, 'images/') ? asset($photo->path) : asset('storage/'.$photo->path);
+                            @endphp
                             <div class="relative aspect-square bg-slate-100 rounded-md border border-slate-200 overflow-hidden cursor-pointer hover:ring-2 hover:ring-primary">
                                 <img
-                                    src="{{ asset('storage/'.$photo->path) }}"
-                                    data-full-url="{{ asset('storage/'.$photo->path) }}"
+                                    src="{{ $thumbUrl }}"
+                                    data-full-url="{{ $thumbUrl }}"
                                     alt="Foto {{ $product->name }}"
                                     class="w-full h-full object-cover"
                                     onclick="document.getElementById('main-product-image').src = this.dataset.fullUrl;"

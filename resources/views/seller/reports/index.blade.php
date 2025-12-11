@@ -35,7 +35,7 @@
                         Termasuk: Rating, Kategori, Harga
                     </li>
                 </ul>
-                <a href="{{ route('seller.reports.stock-by-quantity') }}" 
+                <a href="{{ route('seller.reports.stock-by-quantity', ['token' => now()->format('YmdHis') . '-' . substr(md5(uniqid(mt_rand(), true)), 0, 8)]) }}" 
                    class="inline-flex items-center gap-2 px-4 py-2.5 bg-blue-600 text-white rounded-xl text-sm font-semibold hover:bg-blue-700 transition-colors">
                     <span class="material-symbols-outlined text-lg">download</span>
                     Unduh PDF
@@ -65,7 +65,7 @@
                         Termasuk: Stok, Kategori, Harga
                     </li>
                 </ul>
-                <a href="{{ route('seller.reports.stock-by-rating') }}" 
+                <a href="{{ route('seller.reports.stock-by-rating', ['token' => now()->format('YmdHis') . '-' . substr(md5(uniqid(mt_rand(), true)), 0, 8)]) }}" 
                    class="inline-flex items-center gap-2 px-4 py-2.5 bg-yellow-600 text-white rounded-xl text-sm font-semibold hover:bg-yellow-700 transition-colors">
                     <span class="material-symbols-outlined text-lg">download</span>
                     Unduh PDF
@@ -95,7 +95,7 @@
                         Termasuk: Rating, Kategori, Harga
                     </li>
                 </ul>
-                <a href="{{ route('seller.reports.low-stock') }}" 
+                <a href="{{ route('seller.reports.low-stock', ['token' => now()->format('YmdHis') . '-' . substr(md5(uniqid(mt_rand(), true)), 0, 8)]) }}" 
                    class="inline-flex items-center gap-2 px-4 py-2.5 bg-red-600 text-white rounded-xl text-sm font-semibold hover:bg-red-700 transition-colors">
                     <span class="material-symbols-outlined text-lg">download</span>
                     Unduh PDF

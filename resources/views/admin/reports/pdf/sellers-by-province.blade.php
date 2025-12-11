@@ -57,15 +57,15 @@
         .province-header {
             font-size: 12pt;
             font-weight: bold;
-            color: #fff;
+            color: #ffffff;
             padding: 10px 15px;
-            background: linear-gradient(135deg, #24aceb, #1a8bc7);
+            background-color: #24aceb;
             margin-bottom: 12px;
         }
         
         .province-count {
             float: right;
-            background-color: rgba(255,255,255,0.2);
+            background-color: #1a8bc7;
             padding: 2px 10px;
             border-radius: 12px;
             font-size: 10pt;
@@ -154,41 +154,79 @@
             color: #999;
             font-style: italic;
         }
+        
+        .empty-province-section {
+            margin-bottom: 25px;
+        }
+        
+        .empty-province-title {
+            font-size: 12pt;
+            font-weight: bold;
+            color: #ffffff;
+            padding: 10px 15px;
+            background-color: #6b7280;
+            margin-bottom: 12px;
+        }
+        
+        .empty-province-list {
+            background-color: #f9fafb;
+            border: 1px solid #e5e7eb;
+            padding: 15px;
+        }
+        
+        .empty-province-item {
+            display: inline-block;
+            padding: 5px 12px;
+            margin: 3px;
+            background-color: #f3f4f6;
+            border: 1px solid #d1d5db;
+            font-size: 9pt;
+            color: #374151;
+        }
     </style>
 </head>
 <body>
-    <div class="header">
-        <h1>LAPAK MAHASISWA</h1>
-        <div class="subtitle">{{ $title }}</div>
-        <div class="date">Dibuat pada: {{ $generatedAt }} oleh {{ $generatedBy }}</div>
+    <div style="text-align: center; padding-bottom: 15px; border-bottom: 3px solid #24aceb; margin-bottom: 25px;">
+        <h1 style="font-size: 16pt; color: #24aceb; margin-bottom: 5px;">LAPAK MAHASISWA</h1>
+        <div style="font-size: 13pt; color: #333333; font-weight: bold;">{{ $title }}</div>
+        <div style="font-size: 10pt; color: #666666; margin-top: 8px;">Dibuat pada: {{ $generatedAt }} oleh {{ $generatedBy }}</div>
     </div>
 
     <!-- Summary -->
-    <div class="summary-box">
-        <h3>RINGKASAN SEBARAN PENJUAL PER PROVINSI</h3>
-        <div class="summary-grid">
-            <div class="summary-item">
-                <div class="summary-number">{{ $sellersByProvince->count() }}</div>
-                <div class="summary-label">Total Provinsi</div>
-            </div>
-            <div class="summary-item">
-                <div class="summary-number">{{ $sellersByProvince->flatten()->count() }}</div>
-                <div class="summary-label">Total Penjual</div>
-            </div>
-            <div class="summary-item">
-                <div class="summary-number">{{ $sellersByProvince->count() > 0 ? number_format($sellersByProvince->flatten()->count() / $sellersByProvince->count(), 1) : 0 }}</div>
-                <div class="summary-label">Rata-rata per Provinsi</div>
-            </div>
-        </div>
+    <div style="background-color: #f0f7fc; border: 2px solid #24aceb; padding: 15px; margin-bottom: 20px;">
+        <h3 style="font-size: 11pt; color: #24aceb; margin-bottom: 15px; text-align: center;">RINGKASAN SEBARAN PENJUAL PER PROVINSI</h3>
+        <table style="width: 100%; border-collapse: collapse;">
+            <tr>
+                <td style="text-align: center; padding: 10px; border-right: 1px solid #ddd; width: 33%;">
+                    <div style="font-size: 20pt; font-weight: bold; color: #24aceb;">{{ count($allProvinces) }}</div>
+                    <div style="font-size: 9pt; color: #666666;">Total Provinsi</div>
+                </td>
+                <td style="text-align: center; padding: 10px; border-right: 1px solid #ddd; width: 33%;">
+                    <div style="font-size: 20pt; font-weight: bold; color: #24aceb;">{{ $provincesWithSellersCount }}</div>
+                    <div style="font-size: 9pt; color: #666666;">Provinsi Memiliki Penjual</div>
+                </td>
+                <td style="text-align: center; padding: 10px; width: 33%;">
+                    <div style="font-size: 20pt; font-weight: bold; color: #24aceb;">{{ $totalSellers }}</div>
+                    <div style="font-size: 9pt; color: #666666;">Total Penjual</div>
+                </td>
+            </tr>
+        </table>
     </div>
 
-    <!-- Sellers by Province -->
-    @forelse($sellersByProvince as $province => $sellers)
+    <!-- BAGIAN 1: Provinsi yang Memiliki Penjual -->
+    @php $provinceNumber = 1; @endphp
+    @foreach($provincesWithSellersData as $province => $sellers)
     <div class="province-section">
-        <div class="province-header">
-            {{ $province ?: 'Provinsi Tidak Diketahui' }}
-            <span class="province-count">{{ $sellers->count() }} Penjual</span>
-        </div>
+        <table style="width: 100%; margin-bottom: 12px;">
+            <tr>
+                <td style="background-color: #24aceb; color: #ffffff; font-size: 12pt; font-weight: bold; padding: 10px 15px;">
+                    {{ $provinceNumber }}. {{ $province }}
+                </td>
+                <td style="background-color: #1a8bc7; color: #ffffff; font-size: 10pt; padding: 10px 15px; width: 100px; text-align: center;">
+                    {{ $sellers->count() }} Penjual
+                </td>
+            </tr>
+        </table>
         
         <table>
             <thead>
@@ -198,7 +236,6 @@
                     <th>Pemilik</th>
                     <th>Email</th>
                     <th>Kota/Kabupaten</th>
-                    <th>Kecamatan</th>
                 </tr>
             </thead>
             <tbody>
@@ -209,15 +246,31 @@
                     <td>{{ $seller->name }}</td>
                     <td>{{ $seller->email }}</td>
                     <td>{{ $seller->kota ?? '-' }}</td>
-                    <td>{{ $seller->kecamatan ?? '-' }}</td>
                 </tr>
                 @endforeach
             </tbody>
         </table>
     </div>
-    @empty
-    <div class="no-data">Belum ada data penjual berdasarkan provinsi</div>
-    @endforelse
+    @php $provinceNumber++; @endphp
+    @endforeach
+
+    <!-- BAGIAN 2: Provinsi yang Belum Memiliki Penjual -->
+    @if($provincesWithoutSellers->count() > 0)
+    <div class="empty-province-section">
+        <table style="width: 100%; margin-bottom: 12px;">
+            <tr>
+                <td style="background-color: #6b7280; color: #ffffff; font-size: 12pt; font-weight: bold; padding: 10px 15px;">
+                    PROVINSI BELUM MEMILIKI PENJUAL ({{ $provincesWithoutSellers->count() }} Provinsi)
+                </td>
+            </tr>
+        </table>
+        <div class="empty-province-list">
+            @foreach($provincesWithoutSellers as $index => $province)
+            <span class="empty-province-item">{{ $index + 1 }}. {{ $province }}</span>
+            @endforeach
+        </div>
+    </div>
+    @endif
 
     <div class="footer">
         LapakMahasiswa - Marketplace Mahasiswa Indonesia | Halaman {PAGE_NUM} dari {PAGE_COUNT}

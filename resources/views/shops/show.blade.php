@@ -174,12 +174,13 @@
                     @foreach($products as $product)
                         @php
                             $photo = optional($product->photos->first())->path;
+                            $photoUrl = $photo ? (str_starts_with($photo, 'images/') ? asset($photo) : asset('storage/'.$photo)) : null;
                             $rating = number_format($product->average_rating ?? 0, 1);
                         @endphp
                         <a href="{{ route('products.show', $product) }}" class="group rounded-2xl border border-transparent bg-[#f6f7f8] hover:border-primary/30 hover:bg-white transition-all duration-200 shadow-sm hover:shadow-lg flex flex-col overflow-hidden">
                             <div class="relative w-full aspect-square bg-white flex items-center justify-center overflow-hidden">
-                                @if($photo)
-                                    <img src="{{ asset('storage/'.$photo) }}" alt="{{ $product->name }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                                @if($photoUrl)
+                                    <img src="{{ $photoUrl }}" alt="{{ $product->name }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
                                 @else
                                     <span class="material-symbols-outlined text-5xl text-gray-300">image</span>
                                 @endif

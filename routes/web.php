@@ -54,7 +54,7 @@ Route::get('/', function () {
         });
     }
     
-    $products = $query->take(12)->get();
+    $products = $query->paginate(12)->withQueryString();
     $selectedCategory = $category;
     $searchQuery = $search;
     
@@ -96,9 +96,9 @@ Route::middleware(['auth'])->group(function () {
     
     // Admin Reports
     Route::get('/admin/reports', [AdminReportController::class, 'index'])->name('admin.reports.index');
-    Route::get('/admin/reports/seller-status', [AdminReportController::class, 'sellerStatus'])->name('admin.reports.seller-status');
-    Route::get('/admin/reports/sellers-by-province', [AdminReportController::class, 'sellersByProvince'])->name('admin.reports.sellers-by-province');
-    Route::get('/admin/reports/product-ratings', [AdminReportController::class, 'productRatings'])->name('admin.reports.product-ratings');
+    Route::get('/admin/reports/seller-status/{token}', [AdminReportController::class, 'sellerStatus'])->name('admin.reports.seller-status');
+    Route::get('/admin/reports/sellers-by-province/{token}', [AdminReportController::class, 'sellersByProvince'])->name('admin.reports.sellers-by-province');
+    Route::get('/admin/reports/product-ratings/{token}', [AdminReportController::class, 'productRatings'])->name('admin.reports.product-ratings');
     
     // Seller Verification
     Route::get('/admin/sellers', [AdminSellerVerificationController::class, 'index'])->name('admin.sellers.index');
@@ -130,11 +130,11 @@ Route::middleware(['auth'])->group(function () {
     // Seller Reports
     Route::get('/seller/reports', [SellerReportController::class, 'index'])
         ->name('seller.reports.index');
-    Route::get('/seller/reports/stock-by-quantity', [SellerReportController::class, 'stockByQuantity'])
+    Route::get('/seller/reports/stock-by-quantity/{token}', [SellerReportController::class, 'stockByQuantity'])
         ->name('seller.reports.stock-by-quantity');
-    Route::get('/seller/reports/stock-by-rating', [SellerReportController::class, 'stockByRating'])
+    Route::get('/seller/reports/stock-by-rating/{token}', [SellerReportController::class, 'stockByRating'])
         ->name('seller.reports.stock-by-rating');
-    Route::get('/seller/reports/low-stock', [SellerReportController::class, 'lowStock'])
+    Route::get('/seller/reports/low-stock/{token}', [SellerReportController::class, 'lowStock'])
         ->name('seller.reports.low-stock');
     
     Route::get('/seller/products/create', [ProductController::class, 'create'])

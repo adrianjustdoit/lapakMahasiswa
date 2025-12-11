@@ -27,7 +27,7 @@
                 <span class="material-symbols-outlined text-sm">info</span>
             </div>
             <div class="border-t border-[#e8eef3] pt-4">
-                <a href="{{ route('admin.reports.seller-status') }}" 
+                <a href="{{ route('admin.reports.seller-status', ['token' => now()->format('YmdHis') . '-' . substr(md5(uniqid(mt_rand(), true)), 0, 8)]) }}" 
                    class="w-full flex items-center justify-center gap-2 px-4 py-3 bg-green-600 text-white rounded-xl font-semibold hover:bg-green-700 transition-colors">
                     <span class="material-symbols-outlined">download</span>
                     Download PDF
@@ -50,7 +50,7 @@
                 <span class="material-symbols-outlined text-sm">info</span>
             </div>
             <div class="border-t border-[#e8eef3] pt-4">
-                <a href="{{ route('admin.reports.sellers-by-province') }}" 
+                <a href="{{ route('admin.reports.sellers-by-province', ['token' => now()->format('YmdHis') . '-' . substr(md5(uniqid(mt_rand(), true)), 0, 8)]) }}" 
                    class="w-full flex items-center justify-center gap-2 px-4 py-3 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 transition-colors">
                     <span class="material-symbols-outlined">download</span>
                     Download PDF
@@ -73,7 +73,7 @@
                 <span class="material-symbols-outlined text-sm">info</span>
             </div>
             <div class="border-t border-[#e8eef3] pt-4">
-                <a href="{{ route('admin.reports.product-ratings') }}" 
+                <a href="{{ route('admin.reports.product-ratings', ['token' => now()->format('YmdHis') . '-' . substr(md5(uniqid(mt_rand(), true)), 0, 8)]) }}" 
                    class="w-full flex items-center justify-center gap-2 px-4 py-3 bg-yellow-600 text-white rounded-xl font-semibold hover:bg-yellow-700 transition-colors">
                     <span class="material-symbols-outlined">download</span>
                     Download PDF

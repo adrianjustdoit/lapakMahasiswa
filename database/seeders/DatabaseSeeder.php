@@ -21,6 +21,10 @@ class DatabaseSeeder extends Seeder
         $this->call([
             AdminUserSeeder::class,
             SellerSeeder::class,
+            TokopediaProductSeeder::class,
+            Tokopedia2ProductSeeder::class,
+            Tokopedia3ProductSeeder::class,
+            GuestReviewSeeder::class,
         ]);
 
         

@@ -310,8 +310,11 @@
                 
                 <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
                     @foreach($product->photos as $photo)
+                        @php
+                            $photoUrl = str_starts_with($photo->path, 'images/') ? asset($photo->path) : asset('storage/' . $photo->path);
+                        @endphp
                         <div class="relative aspect-square rounded-xl overflow-hidden border-2 border-gray-200 dark:border-gray-600 group">
-                            <img src="{{ asset('storage/' . $photo->path) }}" alt="Photo" class="w-full h-full object-cover">
+                            <img src="{{ $photoUrl }}" alt="Photo" class="w-full h-full object-cover">
                             
                             @if($photo->is_cover)
                                 <div class="absolute top-2 left-2 px-2 py-1 bg-primary text-white text-xs font-bold rounded-full">

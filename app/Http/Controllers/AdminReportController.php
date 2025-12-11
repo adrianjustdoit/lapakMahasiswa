@@ -31,7 +31,7 @@ class AdminReportController extends Controller
     /**
      * SRS-MartPlace-09: Laporan daftar akun penjual aktif dan tidak aktif
      */
-    public function sellerStatus(Request $request)
+    public function sellerStatus(Request $request, $token)
     {
         if (!auth()->user()->is_admin) {
             abort(403, 'Unauthorized');
@@ -63,19 +63,62 @@ class AdminReportController extends Controller
         // Set default font untuk DomPDF
         $pdf->getDomPDF()->set_option('defaultFont', 'DejaVu Sans');
 
-        return $pdf->download('laporan-status-penjual-' . now()->format('Y-m-d') . '.pdf');
+        return $pdf->download('laporan-status-penjual-' . now()->format('Y-m-d_H-i-s') . '.pdf');
     }
 
     /**
      * SRS-MartPlace-10: Laporan daftar penjual (toko) untuk setiap lokasi provinsi
      */
-    public function sellersByProvince(Request $request)
+    public function sellersByProvince(Request $request, $token)
     {
         if (!auth()->user()->is_admin) {
             abort(403, 'Unauthorized');
         }
 
-        $sellersByProvince = User::where('seller_status', 'approved')
+        // Daftar semua 38 provinsi di Indonesia (urutan abjad)
+        $allProvinces = [
+            'Aceh',
+            'Bali',
+            'Banten',
+            'Bengkulu',
+            'Daerah Istimewa Yogyakarta',
+            'DKI Jakarta',
+            'Gorontalo',
+            'Jambi',
+            'Jawa Barat',
+            'Jawa Tengah',
+            'Jawa Timur',
+            'Kalimantan Barat',
+            'Kalimantan Selatan',
+            'Kalimantan Tengah',
+            'Kalimantan Timur',
+            'Kalimantan Utara',
+            'Kepulauan Bangka Belitung',
+            'Kepulauan Riau',
+            'Lampung',
+            'Maluku',
+            'Maluku Utara',
+            'Nusa Tenggara Barat',
+            'Nusa Tenggara Timur',
+            'Papua',
+            'Papua Barat',
+            'Papua Barat Daya',
+            'Papua Pegunungan',
+            'Papua Selatan',
+            'Papua Tengah',
+            'Riau',
+            'Sulawesi Barat',
+            'Sulawesi Selatan',
+            'Sulawesi Tengah',
+            'Sulawesi Tenggara',
+            'Sulawesi Utara',
+            'Sumatera Barat',
+            'Sumatera Selatan',
+            'Sumatera Utara',
+        ];
+
+        // Ambil semua penjual aktif yang dikelompokkan berdasarkan provinsi
+        $sellersByProvinceData = User::where('seller_status', 'approved')
             ->where(function($q) { $q->where('is_admin', false)->orWhereNull('is_admin'); })
             ->whereNotNull('provinsi')
             ->orderBy('provinsi')
@@ -83,9 +126,26 @@ class AdminReportController extends Controller
             ->get()
             ->groupBy('provinsi');
 
+        // Pisahkan provinsi yang punya penjual dan yang tidak
+        $provincesWithSellersData = collect();
+        $provincesWithoutSellers = collect();
+        
+        foreach ($allProvinces as $province) {
+            $sellers = $sellersByProvinceData->get($province, collect());
+            if ($sellers->count() > 0) {
+                $provincesWithSellersData[$province] = $sellers;
+            } else {
+                $provincesWithoutSellers->push($province);
+            }
+        }
+
         $data = [
             'title' => 'Laporan Daftar Penjual Berdasarkan Provinsi',
-            'sellersByProvince' => $sellersByProvince,
+            'provincesWithSellersData' => $provincesWithSellersData,
+            'provincesWithoutSellers' => $provincesWithoutSellers,
+            'allProvinces' => $allProvinces,
+            'totalSellers' => $sellersByProvinceData->flatten()->count(),
+            'provincesWithSellersCount' => $provincesWithSellersData->count(),
             'generatedAt' => now()->format('d F Y H:i:s'),
             'generatedBy' => auth()->user()->name,
         ];
@@ -96,13 +156,13 @@ class AdminReportController extends Controller
         // Set default font untuk DomPDF
         $pdf->getDomPDF()->set_option('defaultFont', 'DejaVu Sans');
 
-        return $pdf->download('laporan-penjual-per-provinsi-' . now()->format('Y-m-d') . '.pdf');
+        return $pdf->download('laporan-penjual-per-provinsi-' . now()->format('Y-m-d_H-i-s') . '.pdf');
     }
 
     /**
      * SRS-MartPlace-11: Laporan daftar produk dan ratingnya
      */
-    public function productRatings(Request $request)
+    public function productRatings(Request $request, $token)
     {
         if (!auth()->user()->is_admin) {
             abort(403, 'Unauthorized');
@@ -138,7 +198,7 @@ class AdminReportController extends Controller
         // Set default font untuk DomPDF
         $pdf->getDomPDF()->set_option('defaultFont', 'DejaVu Sans');
 
-        return $pdf->download('laporan-produk-rating-' . now()->format('Y-m-d') . '.pdf');
+        return $pdf->download('laporan-produk-rating-' . now()->format('Y-m-d_H-i-s') . '.pdf');
     }
 
     /**

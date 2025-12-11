@@ -62,9 +62,10 @@
                 <div class="relative aspect-square bg-gray-100 dark:bg-gray-700">
                     @php
                         $coverPhoto = $product->photos->where('is_cover', true)->first() ?? $product->photos->first();
+                        $photoUrl = $coverPhoto ? (str_starts_with($coverPhoto->path, 'images/') ? asset($coverPhoto->path) : asset('storage/' . $coverPhoto->path)) : null;
                     @endphp
-                    @if($coverPhoto)
-                        <img src="{{ asset('storage/' . $coverPhoto->path) }}" 
+                    @if($photoUrl)
+                        <img src="{{ $photoUrl }}" 
                              alt="{{ $product->name }}"
                              class="w-full h-full object-cover">
                     @else

@@ -191,7 +191,7 @@
             </div>
         </a>
 
-        <a href="{{ route('admin.reports.seller-status') }}" class="flex items-center gap-3 p-4 bg-[#f6f7f8] rounded-xl hover:bg-[#e8eef3] transition-colors group">
+        <a href="{{ route('admin.reports.seller-status', ['token' => now()->format('YmdHis') . '-' . substr(md5(uniqid(mt_rand(), true)), 0, 8)]) }}" class="flex items-center gap-3 p-4 bg-[#f6f7f8] rounded-xl hover:bg-[#e8eef3] transition-colors group">
             <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center group-hover:bg-green-500 transition-colors">
                 <span class="material-symbols-outlined text-green-600 group-hover:text-white">download</span>
             </div>
@@ -201,7 +201,7 @@
             </div>
         </a>
 
-        <a href="{{ route('admin.reports.sellers-by-province') }}" class="flex items-center gap-3 p-4 bg-[#f6f7f8] rounded-xl hover:bg-[#e8eef3] transition-colors group">
+        <a href="{{ route('admin.reports.sellers-by-province', ['token' => now()->format('YmdHis') . '-' . substr(md5(uniqid(mt_rand(), true)), 0, 8)]) }}" class="flex items-center gap-3 p-4 bg-[#f6f7f8] rounded-xl hover:bg-[#e8eef3] transition-colors group">
             <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center group-hover:bg-blue-500 transition-colors">
                 <span class="material-symbols-outlined text-blue-600 group-hover:text-white">download</span>
             </div>
@@ -211,7 +211,7 @@
             </div>
         </a>
 
-        <a href="{{ route('admin.reports.product-ratings') }}" class="flex items-center gap-3 p-4 bg-[#f6f7f8] rounded-xl hover:bg-[#e8eef3] transition-colors group">
+        <a href="{{ route('admin.reports.product-ratings', ['token' => now()->format('YmdHis') . '-' . substr(md5(uniqid(mt_rand(), true)), 0, 8)]) }}" class="flex items-center gap-3 p-4 bg-[#f6f7f8] rounded-xl hover:bg-[#e8eef3] transition-colors group">
             <div class="w-10 h-10 bg-yellow-100 rounded-lg flex items-center justify-center group-hover:bg-yellow-500 transition-colors">
                 <span class="material-symbols-outlined text-yellow-600 group-hover:text-white">download</span>
             </div>

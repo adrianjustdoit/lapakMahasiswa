@@ -32,7 +32,7 @@ class SellerReportController extends Controller
     /**
      * Laporan stok produk diurutkan berdasarkan stok (menurun)
      */
-    public function stockByQuantity()
+    public function stockByQuantity($token)
     {
         $user = Auth::user();
         
@@ -66,13 +66,13 @@ class SellerReportController extends Controller
         $pdf->setPaper('a4', 'portrait');
         $pdf->getDomPDF()->set_option('defaultFont', 'DejaVu Sans');
 
-        return $pdf->download('laporan-stok-produk-' . now()->format('Y-m-d') . '.pdf');
+        return $pdf->download('laporan-stok-produk-' . now()->format('Y-m-d_H-i-s') . '.pdf');
     }
 
     /**
      * Laporan stok produk diurutkan berdasarkan rating (menurun)
      */
-    public function stockByRating()
+    public function stockByRating($token)
     {
         $user = Auth::user();
         
@@ -106,13 +106,13 @@ class SellerReportController extends Controller
         $pdf->setPaper('a4', 'portrait');
         $pdf->getDomPDF()->set_option('defaultFont', 'DejaVu Sans');
 
-        return $pdf->download('laporan-stok-rating-' . now()->format('Y-m-d') . '.pdf');
+        return $pdf->download('laporan-stok-rating-' . now()->format('Y-m-d_H-i-s') . '.pdf');
     }
 
     /**
      * Laporan stok yang harus segera dipesan (stock < 2)
      */
-    public function lowStock()
+    public function lowStock($token)
     {
         $user = Auth::user();
         
@@ -148,7 +148,7 @@ class SellerReportController extends Controller
         $pdf->setPaper('a4', 'portrait');
         $pdf->getDomPDF()->set_option('defaultFont', 'DejaVu Sans');
 
-        return $pdf->download('laporan-stok-rendah-' . now()->format('Y-m-d') . '.pdf');
+        return $pdf->download('laporan-stok-rendah-' . now()->format('Y-m-d_H-i-s') . '.pdf');
     }
 
     /**

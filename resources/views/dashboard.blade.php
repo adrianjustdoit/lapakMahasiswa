@@ -93,10 +93,11 @@
                             <div class="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col">
                                 @php
                                     $photo = optional($product->photos->first())->path;
+                                    $photoUrl = $photo ? (str_starts_with($photo, 'images/') ? asset($photo) : asset('storage/'.$photo)) : null;
                                 @endphp
                                 <div class="w-full aspect-square bg-gray-100 dark:bg-gray-700 rounded-lg overflow-hidden mb-3 flex items-center justify-center">
-                                    @if($photo)
-                                        <img src="{{ asset('storage/'.$photo) }}" alt="{{ $product->name }}" class="w-full h-full object-cover max-w-full max-h-full">
+                                    @if($photoUrl)
+                                        <img src="{{ $photoUrl }}" alt="{{ $product->name }}" class="w-full h-full object-cover max-w-full max-h-full">
                                     @else
                                         <span class="material-symbols-outlined text-4xl text-gray-300">image</span>
                                     @endif

@@ -39,6 +39,33 @@
         .material-symbols-outlined {
             font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
         }
+        /* Star rating styles - filled star */
+        .star-filled {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            color: #facc15; /* yellow-400 */
+        }
+        /* Star rating styles - empty star */
+        .star-empty {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+            color: #cbd5e1; /* slate-300 */
+        }
+        /* Water fill effect for average rating */
+        .star-water-container {
+            position: relative;
+            display: inline-flex;
+        }
+        .star-water-bg {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+            color: #e2e8f0; /* slate-200 */
+        }
+        .star-water-fill {
+            position: absolute;
+            top: 0;
+            left: 0;
+            overflow: hidden;
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            color: #facc15; /* yellow-400 */
+        }
     </style>
 </head>
 <body class="font-display antialiased bg-background-light text-[#0e171b]">
@@ -120,7 +147,27 @@
 
                     <div class="flex items-center space-x-2 mt-2 text-sm text-slate-500">
                         <div class="flex items-center">
-                            <span class="material-symbols-outlined text-yellow-400 text-base">star</span>
+                            <!-- Mini water fill stars -->
+                            <div class="flex mr-1">
+                                @for($i = 1; $i <= 5; $i++)
+                                    @php
+                                        $starValue = $averageRating - ($i - 1);
+                                        if ($starValue >= 1) {
+                                            $fillPercent = 100;
+                                        } elseif ($starValue > 0) {
+                                            $fillPercent = $starValue * 100;
+                                        } else {
+                                            $fillPercent = 0;
+                                        }
+                                    @endphp
+                                    <div class="star-water-container">
+                                        <span class="material-symbols-outlined text-base star-water-bg">star</span>
+                                        <div class="star-water-fill" style="width: {{ $fillPercent }}%">
+                                            <span class="material-symbols-outlined text-base">star</span>
+                                        </div>
+                                    </div>
+                                @endfor
+                            </div>
                             <span class="ml-1 font-medium text-slate-800">
                                 {{ number_format($averageRating, 1) }}
                             </span>
@@ -195,8 +242,30 @@
                             <div class="w-full md:w-auto">
                                 <div class="rounded-2xl bg-gradient-to-br from-primary/15 to-primary/5 px-6 py-5 text-center">
                                     <div class="text-5xl font-extrabold text-primary flex items-center justify-center">
-                                        <span class="material-symbols-outlined text-yellow-400 text-4xl mr-2">star</span>
                                         {{ number_format($averageRating, 1) }}
+                                    </div>
+                                    <!-- Water fill stars for average rating -->
+                                    <div class="flex justify-center mt-2">
+                                        @for($i = 1; $i <= 5; $i++)
+                                            @php
+                                                // Calculate fill percentage for this star
+                                                $starValue = $averageRating - ($i - 1);
+                                                if ($starValue >= 1) {
+                                                    $fillPercent = 100;
+                                                } elseif ($starValue > 0) {
+                                                    $fillPercent = $starValue * 100;
+                                                } else {
+                                                    $fillPercent = 0;
+                                                }
+                                            @endphp
+                                            <div class="star-water-container">
+                                                <span class="material-symbols-outlined text-2xl star-water-bg">star</span>
+                                                <div class="star-water-fill" style="width: {{ $fillPercent }}%">
+                                                    <span class="material-symbols-outlined text-2xl">star</span>
+                                                </div>
+                                            </div>
+                                        @endfor
+                                    </div>
                                     </div>
                                     <p class="text-xs uppercase tracking-widest text-slate-500 mt-2">Dari 5 bintang</p>
                                     <p class="text-xs text-slate-500 mt-1">{{ $reviewsCount }} rating masuk</p>
@@ -313,14 +382,14 @@
                                             <div>
                                                 <p class="font-semibold text-slate-900">{{ $review->name }}</p>
                                                 <div class="flex items-center text-xs text-slate-500 mt-1">
-                                                    <div class="flex text-yellow-400">
+                                                    <div class="flex">
                                                         @for($i = 1; $i <= 5; $i++)
-                                                            <span class="material-symbols-outlined text-sm">
-                                                                {{ $i <= $review->rating ? 'star' : 'star_border' }}
-                                                            </span>
+                                                            <span class="material-symbols-outlined text-sm {{ $i <= $review->rating ? 'star-filled' : 'star-empty' }}">star</span>
                                                         @endfor
                                                     </div>
-                                                    <span class="ml-2">{{ $review->created_at?->diffForHumans() }}</span>
+                                                    <span class="ml-2 font-medium text-slate-600">({{ $review->rating }}/5)</span>
+                                                    <span class="mx-2 text-slate-300">•</span>
+                                                    <span>{{ $review->created_at?->diffForHumans() }}</span>
                                                 </div>
                                             </div>
                                             @if($review->provinsi)

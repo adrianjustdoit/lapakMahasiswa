@@ -48,10 +48,30 @@
                     </div>
                     <div class="min-w-[140px] rounded-2xl border border-white/70 bg-white/70 px-4 py-3 shadow-sm">
                         <p class="text-xs text-[#4d8199]">Rating Rata-rata</p>
-                        <p class="text-2xl font-semibold text-[#0e171b] flex items-center gap-1">
-                            <span class="material-symbols-outlined text-yellow-400 text-base">star</span>
-                            {{ number_format($reviewSummary['average'] ?? 0, 1) }}
-                        </p>
+                        <div class="flex items-center gap-1">
+                            @php $avgShopRating = $reviewSummary['average'] ?? 0; @endphp
+                            <div class="flex">
+                                @for($i = 1; $i <= 5; $i++)
+                                    @php
+                                        $starValue = $avgShopRating - ($i - 1);
+                                        if ($starValue >= 1) {
+                                            $fillPercent = 100;
+                                        } elseif ($starValue > 0) {
+                                            $fillPercent = $starValue * 100;
+                                        } else {
+                                            $fillPercent = 0;
+                                        }
+                                    @endphp
+                                    <div class="star-water-container">
+                                        <span class="material-symbols-outlined text-sm star-water-bg">star</span>
+                                        <div class="star-water-fill" style="width: {{ $fillPercent }}%">
+                                            <span class="material-symbols-outlined text-sm">star</span>
+                                        </div>
+                                    </div>
+                                @endfor
+                            </div>
+                            <span class="text-xl font-semibold text-[#0e171b]">{{ number_format($avgShopRating, 1) }}</span>
+                        </div>
                     </div>
                     <div class="min-w-[140px] rounded-2xl border border-white/70 bg-white/70 px-4 py-3 shadow-sm">
                         <p class="text-xs text-[#4d8199]">Kepuasan</p>
@@ -95,8 +115,29 @@
                 <div class="flex flex-col md:flex-row gap-6">
                     <div class="rounded-2xl bg-[#f6f7f8] px-5 py-4 text-center md:min-w-[180px]">
                         <div class="text-4xl font-extrabold text-primary flex items-center justify-center">
-                            <span class="material-symbols-outlined text-yellow-400 text-3xl mr-1">star</span>
                             {{ number_format($reviewSummary['average'] ?? 0, 1) }}
+                        </div>
+                        <!-- Water fill stars -->
+                        <div class="flex justify-center mt-2">
+                            @php $avgRating = $reviewSummary['average'] ?? 0; @endphp
+                            @for($i = 1; $i <= 5; $i++)
+                                @php
+                                    $starValue = $avgRating - ($i - 1);
+                                    if ($starValue >= 1) {
+                                        $fillPercent = 100;
+                                    } elseif ($starValue > 0) {
+                                        $fillPercent = $starValue * 100;
+                                    } else {
+                                        $fillPercent = 0;
+                                    }
+                                @endphp
+                                <div class="star-water-container">
+                                    <span class="material-symbols-outlined text-xl star-water-bg">star</span>
+                                    <div class="star-water-fill" style="width: {{ $fillPercent }}%">
+                                        <span class="material-symbols-outlined text-xl">star</span>
+                                    </div>
+                                </div>
+                            @endfor
                         </div>
                         <p class="text-xs text-[#4d8199] mt-1">dari 5.0</p>
                         <p class="text-sm font-semibold text-[#0e171b] mt-2">{{ $reviewSummary['positive'] ?? 0 }}% pembeli puas</p>
@@ -216,8 +257,28 @@
                     <p class="text-xs text-[#4d8199]">Rangkuman otomatis dari 10 produk terakhir</p>
                 </div>
                 <div class="rounded-full bg-[#f6f7f8] px-4 py-2 text-sm text-[#0e171b] flex items-center gap-2">
-                    <span class="material-symbols-outlined text-yellow-400">star</span>
-                    {{ number_format($reviewSummary['average'] ?? 0, 1) }} / 5.0
+                    @php $avgReviewRating = $reviewSummary['average'] ?? 0; @endphp
+                    <div class="flex">
+                        @for($i = 1; $i <= 5; $i++)
+                            @php
+                                $starValue = $avgReviewRating - ($i - 1);
+                                if ($starValue >= 1) {
+                                    $fillPercent = 100;
+                                } elseif ($starValue > 0) {
+                                    $fillPercent = $starValue * 100;
+                                } else {
+                                    $fillPercent = 0;
+                                }
+                            @endphp
+                            <div class="star-water-container">
+                                <span class="material-symbols-outlined text-sm star-water-bg">star</span>
+                                <div class="star-water-fill" style="width: {{ $fillPercent }}%">
+                                    <span class="material-symbols-outlined text-sm">star</span>
+                                </div>
+                            </div>
+                        @endfor
+                    </div>
+                    {{ number_format($avgReviewRating, 1) }} / 5.0
                     <span class="text-[#d0e0e7]">•</span>
                     {{ $reviewSummary['count'] ?? 0 }} ulasan
                 </div>
@@ -255,12 +316,11 @@
                                 </div>
                                 <span class="text-xs text-[#9bb6c4]">{{ $review->created_at?->diffForHumans() }}</span>
                             </div>
-                            <div class="flex items-center text-yellow-400 mt-2">
+                            <div class="flex items-center mt-2">
                                 @for($i = 1; $i <= 5; $i++)
-                                    <span class="material-symbols-outlined text-base">
-                                        {{ $i <= $review->rating ? 'star' : 'star_border' }}
-                                    </span>
+                                    <span class="material-symbols-outlined text-base {{ $i <= $review->rating ? 'star-filled' : 'star-empty' }}">star</span>
                                 @endfor
+                                <span class="ml-2 text-xs font-medium text-slate-600">({{ $review->rating }}/5)</span>
                                 @if($review->provinsi)
                                     <span class="ml-2 rounded-full bg-primary/10 px-3 py-0.5 text-xs text-primary">{{ $review->provinsi }}</span>
                                 @endif

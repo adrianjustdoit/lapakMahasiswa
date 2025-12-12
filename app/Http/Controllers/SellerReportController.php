@@ -30,7 +30,9 @@ class SellerReportController extends Controller
     }
 
     /**
-     * Laporan stok produk diurutkan berdasarkan stok (menurun)
+     * SRS-MartPlace-12: Laporan Daftar Produk Berdasarkan Stock
+     * Kolom: No, Produk, Kategori, Harga, Rating, Stock
+     * Urut: berdasarkan stock
      */
     public function stockByQuantity($token)
     {
@@ -46,19 +48,19 @@ class SellerReportController extends Controller
             ->get()
             ->map(function ($product) {
                 return [
-                    'name' => $product->name,
-                    'stock' => $product->stock,
-                    'category' => $this->formatCategory($product->category),
-                    'price' => $product->price,
+                    'produk' => $product->name,
+                    'kategori' => $this->formatCategory($product->category),
+                    'harga' => $product->price,
                     'rating' => round($product->guest_reviews_avg_rating ?? 0, 1),
+                    'stock' => $product->stock,
                 ];
             });
 
         $data = [
-            'title' => 'Laporan Stok Produk (Urutan Stok Menurun)',
+            'title' => 'Laporan Daftar Produk Berdasarkan Stock',
             'shopName' => $user->shop_name,
             'products' => $products,
-            'generatedAt' => now()->format('d F Y H:i:s'),
+            'generatedAt' => now()->format('d-m-Y'),
             'generatedBy' => $user->name,
         ];
 
@@ -70,7 +72,9 @@ class SellerReportController extends Controller
     }
 
     /**
-     * Laporan stok produk diurutkan berdasarkan rating (menurun)
+     * SRS-MartPlace-13: Laporan Daftar Produk Berdasarkan Rating
+     * Kolom: No, Produk, Kategori, Harga, Stock, Rating
+     * Urut: berdasarkan rating
      */
     public function stockByRating($token)
     {
@@ -86,19 +90,19 @@ class SellerReportController extends Controller
             ->get()
             ->map(function ($product) {
                 return [
-                    'name' => $product->name,
+                    'produk' => $product->name,
+                    'kategori' => $this->formatCategory($product->category),
+                    'harga' => $product->price,
                     'stock' => $product->stock,
-                    'category' => $this->formatCategory($product->category),
-                    'price' => $product->price,
                     'rating' => round($product->guest_reviews_avg_rating ?? 0, 1),
                 ];
             });
 
         $data = [
-            'title' => 'Laporan Stok Produk (Urutan Rating Menurun)',
+            'title' => 'Laporan Daftar Produk Berdasarkan Rating',
             'shopName' => $user->shop_name,
             'products' => $products,
-            'generatedAt' => now()->format('d F Y H:i:s'),
+            'generatedAt' => now()->format('d-m-Y'),
             'generatedBy' => $user->name,
         ];
 
@@ -106,11 +110,13 @@ class SellerReportController extends Controller
         $pdf->setPaper('a4', 'portrait');
         $pdf->getDomPDF()->set_option('defaultFont', 'DejaVu Sans');
 
-        return $pdf->download('laporan-stok-rating-' . now()->format('Y-m-d_H-i-s') . '.pdf');
+        return $pdf->download('laporan-produk-rating-' . now()->format('Y-m-d_H-i-s') . '.pdf');
     }
 
     /**
-     * Laporan stok yang harus segera dipesan (stock < 2)
+     * SRS-MartPlace-14: Laporan Daftar Produk Segera Dipesan
+     * Kolom: No, Produk, Kategori, Harga, Stock
+     * Urut: berdasarkan kategori dan produk
      */
     public function lowStock($token)
     {
@@ -122,25 +128,23 @@ class SellerReportController extends Controller
 
         $products = Product::where('user_id', $user->id)
             ->where('stock', '<', 2)
-            ->withAvg('guestReviews', 'rating')
-            ->orderBy('stock', 'asc')
+            ->orderBy('category')
+            ->orderBy('name')
             ->get()
             ->map(function ($product) {
                 return [
-                    'name' => $product->name,
+                    'produk' => $product->name,
+                    'kategori' => $this->formatCategory($product->category),
+                    'harga' => $product->price,
                     'stock' => $product->stock,
-                    'category' => $this->formatCategory($product->category),
-                    'price' => $product->price,
-                    'rating' => round($product->guest_reviews_avg_rating ?? 0, 1),
                 ];
             });
 
         $data = [
-            'title' => 'Laporan Stok Produk yang Harus Segera Dipesan',
-            'subtitle' => 'Produk dengan stok kurang dari 2',
+            'title' => 'Laporan Daftar Produk Segera Dipesan',
             'shopName' => $user->shop_name,
             'products' => $products,
-            'generatedAt' => now()->format('d F Y H:i:s'),
+            'generatedAt' => now()->format('d-m-Y'),
             'generatedBy' => $user->name,
         ];
 

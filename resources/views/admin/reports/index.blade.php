@@ -13,19 +13,13 @@
 <!-- Report Cards -->
 <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
     
-    <!-- Laporan Status Penjual -->
     <div class="bg-white rounded-2xl border border-[#d0e0e7] shadow-sm overflow-hidden hover:shadow-lg transition-shadow">
         <div class="p-6">
             <div class="w-14 h-14 bg-green-100 rounded-xl flex items-center justify-center mb-4">
                 <span class="material-symbols-outlined text-green-600 text-3xl">person_check</span>
             </div>
-            <h3 class="text-lg font-bold font-display text-[#0e171b] mb-2">Laporan Status Penjual</h3>
-            <p class="text-sm text-[#4d8199] mb-4">
-                Daftar akun penjual aktif dan tidak aktif beserta informasi lengkap toko.
-            </p>
-            <div class="flex items-center gap-2 text-xs text-[#4d8199] mb-4">
-                <span class="material-symbols-outlined text-sm">info</span>
-            </div>
+            <h3 class="text-lg font-bold font-display text-[#0e171b] mb-2">Laporan Daftar Akun Penjual Berdasarkan Status</h3>
+            
             <div class="border-t border-[#e8eef3] pt-4">
                 <a href="{{ route('admin.reports.seller-status', ['token' => now()->format('YmdHis') . '-' . substr(md5(uniqid(mt_rand(), true)), 0, 8)]) }}" 
                    class="w-full flex items-center justify-center gap-2 px-4 py-3 bg-green-600 text-white rounded-xl font-semibold hover:bg-green-700 transition-colors">
@@ -36,19 +30,13 @@
         </div>
     </div>
 
-    <!-- Laporan Penjual per Provinsi -->
     <div class="bg-white rounded-2xl border border-[#d0e0e7] shadow-sm overflow-hidden hover:shadow-lg transition-shadow">
         <div class="p-6">
             <div class="w-14 h-14 bg-blue-100 rounded-xl flex items-center justify-center mb-4">
                 <span class="material-symbols-outlined text-blue-600 text-3xl">map</span>
             </div>
-            <h3 class="text-lg font-bold font-display text-[#0e171b] mb-2">Laporan Penjual per Provinsi</h3>
-            <p class="text-sm text-[#4d8199] mb-4">
-                Daftar penjual yang dikelompokkan berdasarkan lokasi provinsi.
-            </p>
-            <div class="flex items-center gap-2 text-xs text-[#4d8199] mb-4">
-                <span class="material-symbols-outlined text-sm">info</span>
-            </div>
+            <h3 class="text-lg font-bold font-display text-[#0e171b] mb-2">Laporan Daftar Toko Berdasarkan Lokasi Propinsi</h3>
+            
             <div class="border-t border-[#e8eef3] pt-4">
                 <a href="{{ route('admin.reports.sellers-by-province', ['token' => now()->format('YmdHis') . '-' . substr(md5(uniqid(mt_rand(), true)), 0, 8)]) }}" 
                    class="w-full flex items-center justify-center gap-2 px-4 py-3 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 transition-colors">
@@ -59,19 +47,13 @@
         </div>
     </div>
 
-    <!-- Laporan Produk & Rating -->
     <div class="bg-white rounded-2xl border border-[#d0e0e7] shadow-sm overflow-hidden hover:shadow-lg transition-shadow">
         <div class="p-6">
             <div class="w-14 h-14 bg-yellow-100 rounded-xl flex items-center justify-center mb-4">
                 <span class="material-symbols-outlined text-yellow-600 text-3xl">star</span>
             </div>
-            <h3 class="text-lg font-bold font-display text-[#0e171b] mb-2">Laporan Produk & Rating</h3>
-            <p class="text-sm text-[#4d8199] mb-4">
-                Daftar produk dengan rating, nama toko, kategori, harga, dan lokasi provinsi.
-            </p>
-            <div class="flex items-center gap-2 text-xs text-[#4d8199] mb-4">
-                <span class="material-symbols-outlined text-sm">info</span>
-            </div>
+            <h3 class="text-lg font-bold font-display text-[#0e171b] mb-2">Laporan Daftar Produk Berdasarkan Rating</h3>
+           
             <div class="border-t border-[#e8eef3] pt-4">
                 <a href="{{ route('admin.reports.product-ratings', ['token' => now()->format('YmdHis') . '-' . substr(md5(uniqid(mt_rand(), true)), 0, 8)]) }}" 
                    class="w-full flex items-center justify-center gap-2 px-4 py-3 bg-yellow-600 text-white rounded-xl font-semibold hover:bg-yellow-700 transition-colors">

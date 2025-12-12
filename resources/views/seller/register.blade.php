@@ -46,7 +46,9 @@
         .animate-spin {
             animation: spin 1s linear infinite;
         }
+        [x-cloak] { display: none !important; }
     </style>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
 <body class="font-display">
     <div class="relative flex min-h-screen w-full bg-background-light dark:bg-background-dark group/design-root overflow-x-hidden">
@@ -344,13 +346,237 @@
                         </div>
                     </div>
                     <!-- Actions -->
-                    <div class="flex flex-col gap-4 pt-4">
+                    <div class="flex flex-col gap-4 pt-4" x-data="{ showTerms: false }">
                         <div class="flex items-start">
                             <div class="flex items-center h-5">
                                 <input aria-describedby="terms" class="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-primary/30 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-primary/60 dark:ring-offset-gray-800" id="terms" name="terms" required="" type="checkbox"/>
                             </div>
                             <div class="ml-3 text-sm">
-                                <label class="text-gray-500 dark:text-gray-300" for="terms">Saya setuju dengan <a class="font-medium text-primary hover:underline" href="#">syarat dan ketentuan</a> yang berlaku</label>
+                                <label class="text-gray-500 dark:text-gray-300" for="terms">Saya setuju dengan <button type="button" @click="showTerms = true" class="font-medium text-primary hover:underline">syarat dan ketentuan</button> yang berlaku</label>
+                            </div>
+                        </div>
+
+                        <!-- Terms & Conditions Modal -->
+                        <div x-show="showTerms" x-cloak
+                             class="fixed inset-0 z-50 overflow-y-auto"
+                             x-transition:enter="transition ease-out duration-300"
+                             x-transition:enter-start="opacity-0"
+                             x-transition:enter-end="opacity-100"
+                             x-transition:leave="transition ease-in duration-200"
+                             x-transition:leave-start="opacity-100"
+                             x-transition:leave-end="opacity-0">
+                            <!-- Backdrop -->
+                            <div class="fixed inset-0 bg-black/50 backdrop-blur-sm" @click="showTerms = false"></div>
+                            
+                            <!-- Modal Content -->
+                            <div class="flex min-h-full items-center justify-center p-4">
+                                <div class="relative w-full max-w-3xl max-h-[90vh] bg-white dark:bg-gray-800 rounded-2xl shadow-2xl overflow-hidden"
+                                     x-transition:enter="transition ease-out duration-300"
+                                     x-transition:enter-start="opacity-0 scale-95"
+                                     x-transition:enter-end="opacity-100 scale-100"
+                                     x-transition:leave="transition ease-in duration-200"
+                                     x-transition:leave-start="opacity-100 scale-100"
+                                     x-transition:leave-end="opacity-0 scale-95"
+                                     @click.away="showTerms = false">
+                                    
+                                    <!-- Modal Header -->
+                                    <div class="sticky top-0 bg-primary text-white px-6 py-4 flex items-center justify-between z-10">
+                                        <div class="flex items-center gap-3">
+                                            <span class="material-symbols-outlined text-2xl">gavel</span>
+                                            <h3 class="text-xl font-bold">Syarat & Ketentuan Penjual</h3>
+                                        </div>
+                                        <button type="button" @click="showTerms = false" class="p-1 hover:bg-white/20 rounded-full transition-colors">
+                                            <span class="material-symbols-outlined">close</span>
+                                        </button>
+                                    </div>
+                                    
+                                    <!-- Modal Body -->
+                                    <div class="p-6 overflow-y-auto max-h-[calc(90vh-140px)] text-sm text-gray-700 dark:text-gray-300 space-y-6">
+                                        
+                                        <!-- Pendahuluan -->
+                                        <div class="bg-primary/5 border border-primary/20 rounded-xl p-4">
+                                            <p class="text-gray-600 dark:text-gray-400 leading-relaxed">
+                                                Dengan mendaftar sebagai penjual di <strong class="text-primary">LapakMahasiswa</strong>, Anda menyatakan telah membaca, memahami, dan menyetujui seluruh syarat dan ketentuan yang berlaku di bawah ini.
+                                            </p>
+                                        </div>
+
+                                        <!-- Section 1 -->
+                                        <div>
+                                            <h4 class="flex items-center gap-2 text-base font-bold text-gray-900 dark:text-white mb-3">
+                                                <span class="flex items-center justify-center w-6 h-6 rounded-full bg-primary text-white text-xs font-bold">1</span>
+                                                Definisi
+                                            </h4>
+                                            <ul class="list-disc list-inside space-y-2 ml-8 text-gray-600 dark:text-gray-400">
+                                                <li><strong>"Platform"</strong> merujuk pada situs web dan aplikasi LapakMahasiswa.</li>
+                                                <li><strong>"Penjual"</strong> adalah pengguna yang telah terdaftar dan diverifikasi untuk menjual produk di Platform.</li>
+                                                <li><strong>"Produk"</strong> adalah barang atau jasa yang ditawarkan oleh Penjual melalui Platform.</li>
+                                                <li><strong>"Pembeli"</strong> adalah pengguna yang melakukan pembelian produk melalui Platform.</li>
+                                            </ul>
+                                        </div>
+
+                                        <!-- Section 2 -->
+                                        <div>
+                                            <h4 class="flex items-center gap-2 text-base font-bold text-gray-900 dark:text-white mb-3">
+                                                <span class="flex items-center justify-center w-6 h-6 rounded-full bg-primary text-white text-xs font-bold">2</span>
+                                                Persyaratan Menjadi Penjual
+                                            </h4>
+                                            <ul class="list-disc list-inside space-y-2 ml-8 text-gray-600 dark:text-gray-400">
+                                                <li>Berusia minimal <strong>17 tahun</strong> atau memiliki izin dari orang tua/wali.</li>
+                                                <li>Memiliki identitas yang sah (KTP/Kartu Mahasiswa) yang masih berlaku.</li>
+                                                <li>Menyediakan informasi yang benar, akurat, dan lengkap saat pendaftaran.</li>
+                                                <li>Memiliki rekening bank atas nama sendiri untuk keperluan transaksi.</li>
+                                                <li>Bersedia mematuhi semua peraturan dan kebijakan Platform.</li>
+                                            </ul>
+                                        </div>
+
+                                        <!-- Section 3 -->
+                                        <div>
+                                            <h4 class="flex items-center gap-2 text-base font-bold text-gray-900 dark:text-white mb-3">
+                                                <span class="flex items-center justify-center w-6 h-6 rounded-full bg-primary text-white text-xs font-bold">3</span>
+                                                Kewajiban Penjual
+                                            </h4>
+                                            <ul class="list-disc list-inside space-y-2 ml-8 text-gray-600 dark:text-gray-400">
+                                                <li>Memberikan <strong>deskripsi produk yang jujur dan akurat</strong>, termasuk kondisi, ukuran, warna, dan spesifikasi lainnya.</li>
+                                                <li>Mengunggah <strong>foto produk yang asli</strong> dan tidak menyesatkan.</li>
+                                                <li>Memastikan <strong>ketersediaan stok</strong> sesuai dengan yang tertera di Platform.</li>
+                                                <li>Merespons pertanyaan dan pesanan pembeli dalam waktu <strong>maksimal 1x24 jam</strong>.</li>
+                                                <li>Mengemas produk dengan baik dan aman untuk pengiriman.</li>
+                                                <li>Mengirimkan produk sesuai dengan waktu yang dijanjikan.</li>
+                                                <li>Bertanggung jawab atas <strong>kualitas dan keaslian</strong> produk yang dijual.</li>
+                                                <li>Tidak menjual produk yang melanggar hukum atau kebijakan Platform.</li>
+                                            </ul>
+                                        </div>
+
+                                        <!-- Section 4 -->
+                                        <div>
+                                            <h4 class="flex items-center gap-2 text-base font-bold text-gray-900 dark:text-white mb-3">
+                                                <span class="flex items-center justify-center w-6 h-6 rounded-full bg-primary text-white text-xs font-bold">4</span>
+                                                Produk yang Dilarang
+                                            </h4>
+                                            <p class="ml-8 mb-2 text-gray-600 dark:text-gray-400">Penjual dilarang keras menjual produk berikut:</p>
+                                            <ul class="list-disc list-inside space-y-2 ml-8 text-gray-600 dark:text-gray-400">
+                                                <li>Narkotika, obat-obatan terlarang, dan zat adiktif.</li>
+                                                <li>Senjata api, senjata tajam, dan bahan peledak.</li>
+                                                <li>Produk bajakan atau melanggar hak kekayaan intelektual.</li>
+                                                <li>Konten pornografi atau produk dewasa.</li>
+                                                <li>Produk yang mengandung unsur SARA.</li>
+                                                <li>Hewan dan tumbuhan yang dilindungi.</li>
+                                                <li>Dokumen palsu atau ilegal.</li>
+                                                <li>Produk berbahaya yang tidak memiliki izin edar.</li>
+                                            </ul>
+                                        </div>
+
+                                        <!-- Section 5 -->
+                                        <div>
+                                            <h4 class="flex items-center gap-2 text-base font-bold text-gray-900 dark:text-white mb-3">
+                                                <span class="flex items-center justify-center w-6 h-6 rounded-full bg-primary text-white text-xs font-bold">5</span>
+                                                Harga dan Pembayaran
+                                            </h4>
+                                            <ul class="list-disc list-inside space-y-2 ml-8 text-gray-600 dark:text-gray-400">
+                                                <li>Penjual berhak menentukan harga produk secara mandiri.</li>
+                                                <li>Harga yang tercantum harus sudah termasuk pajak yang berlaku (jika ada).</li>
+                                                <li>Platform tidak memungut biaya pendaftaran atau biaya bulanan.</li>
+                                                <li>Transaksi dilakukan langsung antara penjual dan pembeli.</li>
+                                                <li>Penjual bertanggung jawab atas pengelolaan pembayaran sendiri.</li>
+                                            </ul>
+                                        </div>
+
+                                        <!-- Section 6 -->
+                                        <div>
+                                            <h4 class="flex items-center gap-2 text-base font-bold text-gray-900 dark:text-white mb-3">
+                                                <span class="flex items-center justify-center w-6 h-6 rounded-full bg-primary text-white text-xs font-bold">6</span>
+                                                Pengiriman Produk
+                                            </h4>
+                                            <ul class="list-disc list-inside space-y-2 ml-8 text-gray-600 dark:text-gray-400">
+                                                <li>Penjual wajib mengirimkan produk sesuai dengan metode pengiriman yang disepakati.</li>
+                                                <li>Penjual bertanggung jawab atas kerusakan atau kehilangan selama pengiriman.</li>
+                                                <li>Disarankan menggunakan jasa pengiriman yang dapat dilacak (tracking).</li>
+                                                <li>Penjual harus menginformasikan estimasi waktu pengiriman yang realistis.</li>
+                                            </ul>
+                                        </div>
+
+                                        <!-- Section 7 -->
+                                        <div>
+                                            <h4 class="flex items-center gap-2 text-base font-bold text-gray-900 dark:text-white mb-3">
+                                                <span class="flex items-center justify-center w-6 h-6 rounded-full bg-primary text-white text-xs font-bold">7</span>
+                                                Pengembalian dan Refund
+                                            </h4>
+                                            <ul class="list-disc list-inside space-y-2 ml-8 text-gray-600 dark:text-gray-400">
+                                                <li>Penjual wajib menerima pengembalian jika produk tidak sesuai deskripsi.</li>
+                                                <li>Proses pengembalian harus diselesaikan dalam waktu <strong>7 hari kerja</strong>.</li>
+                                                <li>Biaya pengembalian ditanggung oleh pihak yang bersalah.</li>
+                                                <li>Penjual harus memiliki kebijakan pengembalian yang jelas.</li>
+                                            </ul>
+                                        </div>
+
+                                        <!-- Section 8 -->
+                                        <div>
+                                            <h4 class="flex items-center gap-2 text-base font-bold text-gray-900 dark:text-white mb-3">
+                                                <span class="flex items-center justify-center w-6 h-6 rounded-full bg-primary text-white text-xs font-bold">8</span>
+                                                Sanksi dan Pelanggaran
+                                            </h4>
+                                            <p class="ml-8 mb-2 text-gray-600 dark:text-gray-400">Pelanggaran terhadap syarat dan ketentuan dapat mengakibatkan:</p>
+                                            <ul class="list-disc list-inside space-y-2 ml-8 text-gray-600 dark:text-gray-400">
+                                                <li><strong>Peringatan tertulis</strong> untuk pelanggaran ringan.</li>
+                                                <li><strong>Penangguhan sementara</strong> akun penjual (7-30 hari).</li>
+                                                <li><strong>Penghapusan produk</strong> yang melanggar ketentuan.</li>
+                                                <li><strong>Penutupan permanen</strong> akun untuk pelanggaran berat.</li>
+                                                <li><strong>Pelaporan kepada pihak berwajib</strong> jika terdapat unsur pidana.</li>
+                                            </ul>
+                                        </div>
+
+                                        <!-- Section 9 -->
+                                        <div>
+                                            <h4 class="flex items-center gap-2 text-base font-bold text-gray-900 dark:text-white mb-3">
+                                                <span class="flex items-center justify-center w-6 h-6 rounded-full bg-primary text-white text-xs font-bold">9</span>
+                                                Perlindungan Data
+                                            </h4>
+                                            <ul class="list-disc list-inside space-y-2 ml-8 text-gray-600 dark:text-gray-400">
+                                                <li>Platform berkomitmen melindungi data pribadi penjual sesuai undang-undang yang berlaku.</li>
+                                                <li>Data penjual hanya digunakan untuk keperluan operasional Platform.</li>
+                                                <li>Penjual bertanggung jawab menjaga kerahasiaan akun dan password.</li>
+                                            </ul>
+                                        </div>
+
+                                        <!-- Section 10 -->
+                                        <div>
+                                            <h4 class="flex items-center gap-2 text-base font-bold text-gray-900 dark:text-white mb-3">
+                                                <span class="flex items-center justify-center w-6 h-6 rounded-full bg-primary text-white text-xs font-bold">10</span>
+                                                Perubahan Ketentuan
+                                            </h4>
+                                            <ul class="list-disc list-inside space-y-2 ml-8 text-gray-600 dark:text-gray-400">
+                                                <li>Platform berhak mengubah syarat dan ketentuan sewaktu-waktu.</li>
+                                                <li>Perubahan akan diinformasikan melalui email atau notifikasi di Platform.</li>
+                                                <li>Penggunaan Platform setelah perubahan dianggap sebagai persetujuan.</li>
+                                            </ul>
+                                        </div>
+
+                                        <!-- Footer Note -->
+                                        <div class="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-700 rounded-xl p-4">
+                                            <div class="flex gap-3">
+                                                <span class="material-symbols-outlined text-yellow-600 dark:text-yellow-400">info</span>
+                                                <div>
+                                                    <p class="font-semibold text-yellow-800 dark:text-yellow-300">Catatan Penting</p>
+                                                    <p class="text-yellow-700 dark:text-yellow-400 text-sm mt-1">
+                                                        Dengan mencentang kotak persetujuan dan mengklik "Daftar Sekarang", Anda menyatakan telah membaca dan menyetujui seluruh syarat dan ketentuan di atas. 
+                                                        Jika memiliki pertanyaan, silakan hubungi tim support kami.
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                    
+                                    <!-- Modal Footer -->
+                                    <div class="sticky bottom-0 bg-gray-50 dark:bg-gray-700 px-6 py-4 flex justify-end gap-3 border-t border-gray-200 dark:border-gray-600">
+                                        <button type="button" @click="showTerms = false" class="px-5 py-2.5 text-sm font-semibold text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-600 border border-gray-300 dark:border-gray-500 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-500 transition-colors">
+                                            Tutup
+                                        </button>
+                                        <button type="button" @click="showTerms = false; document.getElementById('terms').checked = true;" class="px-5 py-2.5 text-sm font-semibold text-white bg-primary rounded-lg hover:opacity-90 transition-opacity">
+                                            Saya Setuju
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <button class="w-full text-white bg-primary hover:opacity-90 focus:ring-4 focus:outline-none focus:ring-primary/30 font-bold rounded-lg text-base px-5 py-3.5 text-center transition-opacity" type="submit">Daftar Sekarang</button>

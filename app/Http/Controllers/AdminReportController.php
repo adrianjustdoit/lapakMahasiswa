@@ -29,7 +29,7 @@ class AdminReportController extends Controller
     }
 
     /**
-     * SRS-MartPlace-09: Laporan daftar akun penjual aktif dan tidak aktif
+     * Urut: Status (Aktif dulu baru Tidak Aktif)
      */
     public function sellerStatus(Request $request, $token)
     {
@@ -39,21 +39,30 @@ class AdminReportController extends Controller
 
         $notAdmin = function($q) { $q->where('is_admin', false)->orWhereNull('is_admin'); };
 
-        $activeSellers = User::where('seller_status', 'approved')
+        // Gabungkan semua seller, urutkan berdasarkan status (approved = Aktif dulu)
+        $sellers = User::where(function($q) {
+                $q->whereNotNull('seller_status');
+            })
             ->where($notAdmin)
+            ->orderByRaw("CASE WHEN seller_status = 'approved' THEN 0 ELSE 1 END")
             ->orderBy('shop_name')
-            ->get();
-
-        $inactiveSellers = User::whereIn('seller_status', ['pending', 'rejected'])
-            ->where($notAdmin)
-            ->orderBy('shop_name')
-            ->get();
+            ->get()
+            ->map(function ($seller) {
+                return [
+                    'nama_user' => $seller->email,
+                    'nama_pic' => $seller->name,
+                    'nama_toko' => $seller->shop_name ?? '-',
+                    'status' => $seller->seller_status === 'approved' ? 'Aktif' : 'Tidak Aktif',
+                    'is_active' => $seller->seller_status === 'approved',
+                ];
+            });
 
         $data = [
-            'title' => 'Laporan Daftar Akun Penjual Aktif dan Tidak Aktif',
-            'activeSellers' => $activeSellers,
-            'inactiveSellers' => $inactiveSellers,
-            'generatedAt' => now()->format('d F Y H:i:s'),
+            'title' => 'Laporan Daftar Akun Penjual Berdasarkan Status',
+            'sellers' => $sellers,
+            'activeSellersCount' => $sellers->where('is_active', true)->count(),
+            'inactiveSellersCount' => $sellers->where('is_active', false)->count(),
+            'generatedAt' => now()->format('d-m-Y'),
             'generatedBy' => auth()->user()->name,
         ];
 
@@ -67,7 +76,7 @@ class AdminReportController extends Controller
     }
 
     /**
-     * SRS-MartPlace-10: Laporan daftar penjual (toko) untuk setiap lokasi provinsi
+     * Urut: Berdasarkan Propinsi
      */
     public function sellersByProvince(Request $request, $token)
     {
@@ -75,78 +84,25 @@ class AdminReportController extends Controller
             abort(403, 'Unauthorized');
         }
 
-        // Daftar semua 38 provinsi di Indonesia (urutan abjad)
-        $allProvinces = [
-            'Aceh',
-            'Bali',
-            'Banten',
-            'Bengkulu',
-            'Daerah Istimewa Yogyakarta',
-            'DKI Jakarta',
-            'Gorontalo',
-            'Jambi',
-            'Jawa Barat',
-            'Jawa Tengah',
-            'Jawa Timur',
-            'Kalimantan Barat',
-            'Kalimantan Selatan',
-            'Kalimantan Tengah',
-            'Kalimantan Timur',
-            'Kalimantan Utara',
-            'Kepulauan Bangka Belitung',
-            'Kepulauan Riau',
-            'Lampung',
-            'Maluku',
-            'Maluku Utara',
-            'Nusa Tenggara Barat',
-            'Nusa Tenggara Timur',
-            'Papua',
-            'Papua Barat',
-            'Papua Barat Daya',
-            'Papua Pegunungan',
-            'Papua Selatan',
-            'Papua Tengah',
-            'Riau',
-            'Sulawesi Barat',
-            'Sulawesi Selatan',
-            'Sulawesi Tengah',
-            'Sulawesi Tenggara',
-            'Sulawesi Utara',
-            'Sumatera Barat',
-            'Sumatera Selatan',
-            'Sumatera Utara',
-        ];
-
-        // Ambil semua penjual aktif yang dikelompokkan berdasarkan provinsi
-        $sellersByProvinceData = User::where('seller_status', 'approved')
+        // Ambil semua penjual aktif, urutkan berdasarkan provinsi
+        $sellers = User::where('seller_status', 'approved')
             ->where(function($q) { $q->where('is_admin', false)->orWhereNull('is_admin'); })
-            ->whereNotNull('provinsi')
             ->orderBy('provinsi')
             ->orderBy('shop_name')
             ->get()
-            ->groupBy('provinsi');
-
-        // Pisahkan provinsi yang punya penjual dan yang tidak
-        $provincesWithSellersData = collect();
-        $provincesWithoutSellers = collect();
-        
-        foreach ($allProvinces as $province) {
-            $sellers = $sellersByProvinceData->get($province, collect());
-            if ($sellers->count() > 0) {
-                $provincesWithSellersData[$province] = $sellers;
-            } else {
-                $provincesWithoutSellers->push($province);
-            }
-        }
+            ->map(function ($seller) {
+                return [
+                    'nama_toko' => $seller->shop_name ?? '-',
+                    'nama_pic' => $seller->name,
+                    'provinsi' => $seller->provinsi ?? '-',
+                ];
+            });
 
         $data = [
-            'title' => 'Laporan Daftar Penjual Berdasarkan Provinsi',
-            'provincesWithSellersData' => $provincesWithSellersData,
-            'provincesWithoutSellers' => $provincesWithoutSellers,
-            'allProvinces' => $allProvinces,
-            'totalSellers' => $sellersByProvinceData->flatten()->count(),
-            'provincesWithSellersCount' => $provincesWithSellersData->count(),
-            'generatedAt' => now()->format('d F Y H:i:s'),
+            'title' => 'Laporan Daftar Toko Berdasarkan Lokasi Propinsi',
+            'sellers' => $sellers,
+            'totalSellers' => $sellers->count(),
+            'generatedAt' => now()->format('d-m-Y'),
             'generatedBy' => auth()->user()->name,
         ];
 
@@ -160,7 +116,6 @@ class AdminReportController extends Controller
     }
 
     /**
-     * SRS-MartPlace-11: Laporan daftar produk dan ratingnya
      */
     public function productRatings(Request $request, $token)
     {
@@ -168,27 +123,33 @@ class AdminReportController extends Controller
             abort(403, 'Unauthorized');
         }
 
-        $products = Product::with('seller')
+        // Ambil produk dengan rating dari review, provinsi diambil dari pemberi rating
+        $products = Product::with(['seller', 'guestReviews'])
             ->withAvg('guestReviews', 'rating')
             ->withCount('guestReviews')
             ->orderByDesc('guest_reviews_avg_rating')
             ->get()
             ->map(function ($product) {
+                // Ambil provinsi dari pemberi rating terbanyak/terbaru
+                $reviewerProvince = $product->guestReviews()
+                    ->whereNotNull('provinsi')
+                    ->orderByDesc('created_at')
+                    ->value('provinsi') ?? '-';
+                
                 return [
-                    'name' => $product->name,
-                    'shop_name' => $product->shop_name ?? optional($product->seller)->shop_name ?? '-',
-                    'category' => $this->formatCategory($product->category),
-                    'price' => $product->price,
-                    'province' => optional($product->seller)->provinsi ?? '-',
-                    'average_rating' => $product->guest_reviews_avg_rating ?? 0,
-                    'reviews_count' => $product->guest_reviews_count ?? 0,
+                    'produk' => $product->name,
+                    'kategori' => $this->formatCategory($product->category),
+                    'harga' => $product->price,
+                    'rating' => $product->guest_reviews_avg_rating ?? 0,
+                    'nama_toko' => $product->shop_name ?? optional($product->seller)->shop_name ?? '-',
+                    'provinsi' => $reviewerProvince,
                 ];
             });
 
         $data = [
-            'title' => 'Laporan Daftar Produk dan Rating',
+            'title' => 'Laporan Daftar Produk Berdasarkan Rating',
             'products' => $products,
-            'generatedAt' => now()->format('d F Y H:i:s'),
+            'generatedAt' => now()->format('d-m-Y'),
             'generatedBy' => auth()->user()->name,
         ];
 
@@ -223,21 +184,30 @@ class AdminReportController extends Controller
 
         $notAdmin = function($q) { $q->where('is_admin', false)->orWhereNull('is_admin'); };
 
-        $activeSellers = User::where('seller_status', 'approved')
+        // Gabungkan semua seller, urutkan berdasarkan status (approved = Aktif dulu)
+        $sellers = User::where(function($q) {
+                $q->whereNotNull('seller_status');
+            })
             ->where($notAdmin)
+            ->orderByRaw("CASE WHEN seller_status = 'approved' THEN 0 ELSE 1 END")
             ->orderBy('shop_name')
-            ->get();
-
-        $inactiveSellers = User::whereIn('seller_status', ['pending', 'rejected'])
-            ->where($notAdmin)
-            ->orderBy('shop_name')
-            ->get();
+            ->get()
+            ->map(function ($seller) {
+                return [
+                    'nama_user' => $seller->email,
+                    'nama_pic' => $seller->name,
+                    'nama_toko' => $seller->shop_name ?? '-',
+                    'status' => $seller->seller_status === 'approved' ? 'Aktif' : 'Tidak Aktif',
+                    'is_active' => $seller->seller_status === 'approved',
+                ];
+            });
 
         return view('admin.reports.pdf.seller-status', [
-            'title' => 'Laporan Daftar Akun Penjual Aktif dan Tidak Aktif',
-            'activeSellers' => $activeSellers,
-            'inactiveSellers' => $inactiveSellers,
-            'generatedAt' => now()->format('d F Y H:i:s'),
+            'title' => 'Laporan Daftar Akun Penjual Berdasarkan Status',
+            'sellers' => $sellers,
+            'activeSellersCount' => $sellers->where('is_active', true)->count(),
+            'inactiveSellersCount' => $sellers->where('is_active', false)->count(),
+            'generatedAt' => now()->format('d-m-Y'),
             'generatedBy' => auth()->user()->name,
         ]);
     }

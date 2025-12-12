@@ -8,6 +8,7 @@ use App\Models\ProductPhoto;
 use App\Mail\NewReviewNotificationMail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Validation\Rule;
 
 class ProductController extends Controller
 {
@@ -160,10 +161,17 @@ class ProductController extends Controller
     {
         $data = $request->validate([
             'name'     => 'required|string|max:120',
-            'email'    => 'required|email|max:150',
+            'email'    => [
+                'required',
+                'email',
+                'max:150',
+                Rule::unique('product_guest_reviews')->where(fn ($query) => $query->where('product_id', $product->id)),
+            ],
             'provinsi' => 'nullable|string|max:100',
             'rating'   => 'required|integer|min:1|max:5',
             'comment'  => 'required|string|max:1000',
+        ], [
+            'email.unique' => 'Kamu sudah pernah memberikan ulasan untuk produk ini.',
         ]);
 
         $review = ProductGuestReview::create([

@@ -14,10 +14,17 @@ class AdminSellerVerificationController extends Controller
 {
     public function index()
     {
-        // Exclude admin users from seller lists
-        $pending = User::where('seller_status', 'pending')->where(function($q) { $q->where('is_admin', false)->orWhereNull('is_admin'); })->get();
-        $approved = User::where('seller_status', 'approved')->where(function($q) { $q->where('is_admin', false)->orWhereNull('is_admin'); })->get();
-        $rejected = User::where('seller_status', 'rejected')->where(function($q) { $q->where('is_admin', false)->orWhereNull('is_admin'); })->get();
+        // Exclude admin users and non-seller users from seller lists
+        $sellerFilter = function ($q) {
+            $q->whereNotNull('shop_name')
+                ->where(function ($query) {
+                    $query->where('is_admin', false)->orWhereNull('is_admin');
+                });
+        };
+
+        $pending = User::where('seller_status', 'pending')->where($sellerFilter)->get();
+        $approved = User::where('seller_status', 'approved')->where($sellerFilter)->get();
+        $rejected = User::where('seller_status', 'rejected')->where($sellerFilter)->get();
         
         // Get pending profile updates
         $pendingProfileUpdates = SellerProfileUpdate::with('user')
@@ -30,12 +37,16 @@ class AdminSellerVerificationController extends Controller
 
     public function show(User $user)
     {
+        if ($user->is_admin || !$user->shop_name || !$user->seller_status) {
+            abort(404);
+        }
+
         return view('admin.sellers.show', compact('user'));
     }
 
     public function approve(User $user)
     {
-        if ($user->seller_status !== 'pending') {
+        if ($user->is_admin || !$user->shop_name || $user->seller_status !== 'pending') {
             return redirect()->back()->with('error', 'Status bukan pending');
         }
 
@@ -53,7 +64,7 @@ class AdminSellerVerificationController extends Controller
 
     public function reject(User $user, Request $request)
     {
-        if ($user->seller_status !== 'pending') {
+        if ($user->is_admin || !$user->shop_name || $user->seller_status !== 'pending') {
             return redirect()->back()->with('error', 'Status bukan pending');
         }
         $data = $request->validate([

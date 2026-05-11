@@ -9,7 +9,9 @@ use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rules;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 
@@ -18,11 +20,12 @@ class NewPasswordController extends Controller
     /**
      * Display the password reset view.
      */
-    public function create(Request $request): View
+    public function create(Request $request, ?string $token = null): View
     {
         return view('auth.reset-password', [
             'email' => $request->query('email'),
             'code' => $request->query('code'),
+            'token' => $token,
         ]);
     }
 
@@ -33,6 +36,34 @@ class NewPasswordController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
+        if ($request->filled('token')) {
+            $request->validate([
+                'token' => 'required',
+                'email' => 'required|email',
+                'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            ]);
+
+            $status = Password::reset(
+                $request->only('email', 'password', 'password_confirmation', 'token'),
+                function (User $user) use ($request) {
+                    $user->forceFill([
+                        'password' => Hash::make($request->password),
+                        'remember_token' => Str::random(60),
+                    ])->save();
+
+                    event(new PasswordReset($user));
+                }
+            );
+
+            if ($status === Password::PASSWORD_RESET) {
+                return redirect()->route('login')->with('status', __($status));
+            }
+
+            throw ValidationException::withMessages([
+                'email' => [__($status)],
+            ]);
+        }
+
         $request->validate([
             'email' => 'required|email',
             'code' => 'required|string|size:6',

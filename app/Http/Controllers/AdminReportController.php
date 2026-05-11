@@ -37,12 +37,13 @@ class AdminReportController extends Controller
             abort(403, 'Unauthorized');
         }
 
+        $this->ensureValidReportToken($token);
+
         $notAdmin = function($q) { $q->where('is_admin', false)->orWhereNull('is_admin'); };
 
         // Gabungkan semua seller, urutkan berdasarkan status (approved = Aktif dulu)
-        $sellers = User::where(function($q) {
-                $q->whereNotNull('seller_status');
-            })
+        $sellers = User::whereNotNull('shop_name')
+            ->whereNotNull('seller_status')
             ->where($notAdmin)
             ->orderByRaw("CASE WHEN seller_status = 'approved' THEN 0 ELSE 1 END")
             ->orderBy('shop_name')
@@ -84,8 +85,11 @@ class AdminReportController extends Controller
             abort(403, 'Unauthorized');
         }
 
+        $this->ensureValidReportToken($token);
+
         // Ambil semua penjual aktif, urutkan berdasarkan provinsi
         $sellers = User::where('seller_status', 'approved')
+            ->whereNotNull('shop_name')
             ->where(function($q) { $q->where('is_admin', false)->orWhereNull('is_admin'); })
             ->orderBy('provinsi')
             ->orderBy('shop_name')
@@ -122,6 +126,8 @@ class AdminReportController extends Controller
         if (!auth()->user()->is_admin) {
             abort(403, 'Unauthorized');
         }
+
+        $this->ensureValidReportToken($token);
 
         // Ambil produk dengan rating dari review, provinsi diambil dari pemberi rating
         $products = Product::with(['seller', 'guestReviews'])
@@ -173,6 +179,13 @@ class AdminReportController extends Controller
         return ucwords($formatted);
     }
 
+    private function ensureValidReportToken(string $token): void
+    {
+        if (!preg_match('/^' . now()->format('Ymd') . '\\d{6}-[a-f0-9]{8}$/', $token)) {
+            abort(403, 'Token laporan tidak valid.');
+        }
+    }
+
     /**
      * Preview laporan sebelum download (optional)
      */
@@ -185,9 +198,8 @@ class AdminReportController extends Controller
         $notAdmin = function($q) { $q->where('is_admin', false)->orWhereNull('is_admin'); };
 
         // Gabungkan semua seller, urutkan berdasarkan status (approved = Aktif dulu)
-        $sellers = User::where(function($q) {
-                $q->whereNotNull('seller_status');
-            })
+        $sellers = User::whereNotNull('shop_name')
+            ->whereNotNull('seller_status')
             ->where($notAdmin)
             ->orderByRaw("CASE WHEN seller_status = 'approved' THEN 0 ELSE 1 END")
             ->orderBy('shop_name')

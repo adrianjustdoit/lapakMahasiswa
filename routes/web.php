@@ -23,7 +23,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     $category = request('category');
     $search = request('search');
-    $query = \App\Models\Product::with('seller')->latest();
+    $query = \App\Models\Product::with(['seller', 'photos'])->latest();
     
     // Filter by category
     if ($category) {
@@ -89,7 +89,7 @@ Route::post('/seller/register', [SellerRegistrationController::class, 'store'])-
 Route::get('/seller/activate/{token}', [SellerActivationController::class, 'activate'])->name('seller.activate');
 
 // Admin seller verification
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', 'admin'])->group(function () {
     // Admin Dashboard
     Route::get('/admin/dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
     Route::get('/admin/chart-data', [AdminDashboardController::class, 'getChartData'])->name('admin.chart-data');
@@ -120,7 +120,7 @@ Route::post('/products/{product}/reviews', [ProductController::class, 'storeGues
     ->name('products.reviews.store');
 
 // Seller: kelola produk (harus login sebagai seller)
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', 'approved_seller'])->group(function () {
     // Seller Dashboard
     Route::get('/seller/dashboard', [SellerDashboardController::class, 'index'])
         ->name('seller.dashboard');

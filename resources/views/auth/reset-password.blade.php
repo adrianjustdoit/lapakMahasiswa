@@ -21,15 +21,31 @@
 <form method="POST" action="{{ route('password.store') }}" id="reset-form">
     @csrf
 
-    <input type="hidden" name="email" value="{{ $email }}">
-    <input type="hidden" name="code" value="{{ $code }}">
+    <input type="hidden" name="token" value="{{ $token ?? '' }}">
+    <input type="hidden" name="code" value="{{ $code ?? '' }}">
 
-    <!-- Email Display -->
+    <!-- Email -->
     <div class="mb-4">
-        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Email</label>
-        <div class="w-full px-4 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400">
-            {{ $email }}
-        </div>
+        <label for="email" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Email</label>
+        <input
+            type="email"
+            id="email"
+            name="email"
+            value="{{ old('email', $email ?? request('email')) }}"
+            required
+            autocomplete="username"
+            class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary dark:bg-gray-700 dark:text-white"
+            placeholder="email@contoh.com"
+        >
+        @error('email')
+            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+        @enderror
+        @error('code')
+            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+        @enderror
+        @error('token')
+            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+        @enderror
     </div>
 
     <!-- Password -->

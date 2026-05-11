@@ -42,6 +42,8 @@ class SellerReportController extends Controller
             abort(403, 'Unauthorized');
         }
 
+        $this->ensureValidReportToken($token);
+
         $products = Product::where('user_id', $user->id)
             ->withAvg('guestReviews', 'rating')
             ->orderBy('stock', 'desc')
@@ -83,6 +85,8 @@ class SellerReportController extends Controller
         if ($user->seller_status !== 'approved') {
             abort(403, 'Unauthorized');
         }
+
+        $this->ensureValidReportToken($token);
 
         $products = Product::where('user_id', $user->id)
             ->withAvg('guestReviews', 'rating')
@@ -126,6 +130,8 @@ class SellerReportController extends Controller
             abort(403, 'Unauthorized');
         }
 
+        $this->ensureValidReportToken($token);
+
         $products = Product::where('user_id', $user->id)
             ->where('stock', '<', 2)
             ->orderBy('category')
@@ -158,6 +164,13 @@ class SellerReportController extends Controller
     /**
      * Format category slug to readable name
      */
+    private function ensureValidReportToken(string $token): void
+    {
+        if (!preg_match('/^' . now()->format('Ymd') . '\\d{6}-[a-f0-9]{8}$/', $token)) {
+            abort(403, 'Token laporan tidak valid.');
+        }
+    }
+
     private function formatCategory($category)
     {
         if (!$category) return '-';

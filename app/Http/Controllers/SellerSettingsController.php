@@ -32,11 +32,11 @@ class SellerSettingsController extends Controller
 
         $request->validate([
             'shop_name' => 'required|string|max:255',
-            'shop_description' => 'nullable|string|max:1000',
+            'shop_description' => 'nullable|string|max:500',
         ], [
             'shop_name.required' => 'Nama toko wajib diisi.',
             'shop_name.max' => 'Nama toko maksimal 255 karakter.',
-            'shop_description.max' => 'Deskripsi toko maksimal 1000 karakter.',
+            'shop_description.max' => 'Deskripsi toko maksimal 500 karakter.',
         ]);
 
         // Check if there's already a pending update

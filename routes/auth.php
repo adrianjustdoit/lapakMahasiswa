@@ -13,11 +13,10 @@ use App\Http\Controllers\SellerRegistrationController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('guest')->group(function () {
-    // Register mengarah ke seller registration
-    Route::get('register', [SellerRegistrationController::class, 'create'])
+    Route::get('register', [RegisteredUserController::class, 'create'])
                 ->name('register');
 
-    Route::post('register', [SellerRegistrationController::class, 'store']);
+    Route::post('register', [RegisteredUserController::class, 'store']);
 
     Route::get('login', [AuthenticatedSessionController::class, 'create'])
                 ->name('login');
@@ -38,6 +37,9 @@ Route::middleware('guest')->group(function () {
 
     Route::post('resend-reset-code', [PasswordResetLinkController::class, 'resendCode'])
                 ->name('password.resend-code');
+
+    Route::get('reset-password/{token}', [NewPasswordController::class, 'create'])
+                ->name('password.reset');
 
     Route::get('reset-password', [NewPasswordController::class, 'create'])
                 ->name('password.reset-form');

@@ -9,6 +9,7 @@ use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Password;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 
@@ -42,6 +43,10 @@ class PasswordResetLinkController extends Controller
             throw ValidationException::withMessages([
                 'email' => ['Email tidak ditemukan dalam sistem kami.'],
             ]);
+        }
+
+        if ($user->email === $request->email) {
+            Password::sendResetLink($request->only('email'));
         }
 
         // Delete any existing codes for this email
@@ -127,6 +132,10 @@ class PasswordResetLinkController extends Controller
             throw ValidationException::withMessages([
                 'email' => ['Email tidak ditemukan dalam sistem kami.'],
             ]);
+        }
+
+        if ($user->email === $request->email) {
+            Password::sendResetLink($request->only('email'));
         }
 
         // Delete any existing codes for this email

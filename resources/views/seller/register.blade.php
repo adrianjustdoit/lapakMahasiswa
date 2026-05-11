@@ -138,8 +138,8 @@
                                 <input name="shop_name" value="{{ old('shop_name') }}" class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#0e171b] dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-[#d0e0e7] dark:border-gray-700 bg-background-light dark:bg-background-dark focus:border-primary h-12 placeholder:text-[#4d8199] px-4 text-base font-normal leading-normal" placeholder="Masukkan nama toko Anda" required="" type="text"/>
                             </label>
                             <label class="flex flex-col">
-                                <p class="text-[#0e171b] dark:text-gray-300 text-base font-medium leading-normal pb-2">Deskripsi Singkat Toko<span class="text-red-500">*</span></p>
-                                <textarea name="shop_description" class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#0e171b] dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-[#d0e0e7] dark:border-gray-700 bg-background-light dark:bg-background-dark focus:border-primary min-h-28 placeholder:text-[#4d8199] p-4 text-base font-normal leading-normal" placeholder="Jelaskan sedikit tentang toko Anda" required="">{{ old('shop_description') }}</textarea>
+                                <p class="text-[#0e171b] dark:text-gray-300 text-base font-medium leading-normal pb-2">Deskripsi Singkat Toko</p>
+                                <textarea name="shop_description" class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#0e171b] dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-[#d0e0e7] dark:border-gray-700 bg-background-light dark:bg-background-dark focus:border-primary min-h-28 placeholder:text-[#4d8199] p-4 text-base font-normal leading-normal" placeholder="Jelaskan sedikit tentang toko Anda">{{ old('shop_description') }}</textarea>
                             </label>
                         </div>
                     </div>
@@ -174,9 +174,9 @@
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <!-- Provinsi Dropdown -->
                             <label class="flex flex-col sm:col-span-2">
-                                <p class="text-[#0e171b] dark:text-gray-300 text-base font-medium leading-normal pb-2">Provinsi<span class="text-red-500">*</span></p>
+                                <p class="text-[#0e171b] dark:text-gray-300 text-base font-medium leading-normal pb-2">Provinsi</p>
                                 <div class="relative">
-                                    <select id="provinsi-select" name="provinsi" required class="form-select flex w-full min-w-0 flex-1 rounded-lg text-[#0e171b] dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-[#d0e0e7] dark:border-gray-700 bg-background-light dark:bg-background-dark focus:border-primary h-12 px-4 text-base font-normal leading-normal appearance-none cursor-pointer">
+                                    <select id="provinsi-select" name="provinsi" class="form-select flex w-full min-w-0 flex-1 rounded-lg text-[#0e171b] dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-[#d0e0e7] dark:border-gray-700 bg-background-light dark:bg-background-dark focus:border-primary h-12 px-4 text-base font-normal leading-normal appearance-none cursor-pointer">
                                         <option value="">-- Pilih Provinsi --</option>
                                     </select>
                                     <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-500">
@@ -187,9 +187,9 @@
                             </label>
                             <!-- Kabupaten/Kota Dropdown -->
                             <label class="flex flex-col sm:col-span-2">
-                                <p class="text-[#0e171b] dark:text-gray-300 text-base font-medium leading-normal pb-2">Kabupaten/Kota<span class="text-red-500">*</span></p>
+                                <p class="text-[#0e171b] dark:text-gray-300 text-base font-medium leading-normal pb-2">Kabupaten/Kota</p>
                                 <div class="relative">
-                                    <select id="kota-select" name="kota" required disabled class="form-select flex w-full min-w-0 flex-1 rounded-lg text-[#0e171b] dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-[#d0e0e7] dark:border-gray-700 bg-background-light dark:bg-background-dark focus:border-primary h-12 px-4 text-base font-normal leading-normal appearance-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
+                                    <select id="kota-select" name="kota" disabled class="form-select flex w-full min-w-0 flex-1 rounded-lg text-[#0e171b] dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-[#d0e0e7] dark:border-gray-700 bg-background-light dark:bg-background-dark focus:border-primary h-12 px-4 text-base font-normal leading-normal appearance-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
                                         <option value="">-- Pilih Kabupaten/Kota --</option>
                                     </select>
                                     <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-500">
@@ -199,9 +199,9 @@
                             </label>
                             <!-- Kecamatan Dropdown -->
                             <label class="flex flex-col sm:col-span-2">
-                                <p class="text-[#0e171b] dark:text-gray-300 text-base font-medium leading-normal pb-2">Kecamatan<span class="text-red-500">*</span></p>
+                                <p class="text-[#0e171b] dark:text-gray-300 text-base font-medium leading-normal pb-2">Kecamatan</p>
                                 <div class="relative">
-                                    <select id="kecamatan-select" name="kecamatan" required disabled class="form-select flex w-full min-w-0 flex-1 rounded-lg text-[#0e171b] dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-[#d0e0e7] dark:border-gray-700 bg-background-light dark:bg-background-dark focus:border-primary h-12 px-4 text-base font-normal leading-normal appearance-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
+                                    <select id="kecamatan-select" name="kecamatan" disabled class="form-select flex w-full min-w-0 flex-1 rounded-lg text-[#0e171b] dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-[#d0e0e7] dark:border-gray-700 bg-background-light dark:bg-background-dark focus:border-primary h-12 px-4 text-base font-normal leading-normal appearance-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
                                         <option value="">-- Pilih Kecamatan --</option>
                                     </select>
                                     <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-500">

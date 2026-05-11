@@ -26,7 +26,7 @@ return new class extends Migration {
             $table->string('pic_photo_path')->nullable();
 
             // Verification status: pending, approved, rejected
-            $table->enum('seller_status', ['pending', 'approved', 'rejected'])->default('pending');
+            $table->enum('seller_status', ['pending', 'approved', 'rejected'])->nullable();
             $table->text('rejection_reason')->nullable();
             $table->string('activation_token', 64)->nullable()->index();
             $table->boolean('is_admin')->default(false)->index();

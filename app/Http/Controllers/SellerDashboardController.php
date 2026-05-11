@@ -70,9 +70,9 @@ class SellerDashboardController extends Controller
 
         // 2. Sebaran nilai rating per produk
         $ratingDistribution = Product::where('user_id', $user->id)
+            ->whereHas('guestReviews')
             ->withAvg('guestReviews', 'rating')
             ->withCount('guestReviews')
-            ->having('guest_reviews_count', '>', 0)
             ->orderByDesc('guest_reviews_avg_rating')
             ->take(10)
             ->get()

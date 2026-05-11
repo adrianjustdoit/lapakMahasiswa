@@ -9,6 +9,10 @@ class SellerController extends Controller
 {
     public function show(Request $request, User $user)
     {
+        if ($user->seller_status !== 'approved' || !$user->shop_name || $user->is_admin) {
+            abort(404);
+        }
+
         $user->loadCount('products');
 
         $productsQuery = $user->products()
